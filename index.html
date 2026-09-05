@@ -385,6 +385,25 @@ h2.dm .stp{font-size:.42em}
 @media (prefers-reduced-motion:reduce){
   .slot .sk{animation:none;opacity:0}.slot .real{animation:none;opacity:1}}
 
+/* ---- step 2: the widget next to the code that makes it ---- */
+.prev{background:var(--surf);border-radius:var(--r-lg);padding:1em;margin-top:.9em}
+.prev .lbl{font-family:var(--mono);font-size:.62em;color:var(--gray-2);letter-spacing:.04em;margin-bottom:.7em}
+/* ---- step 3: the catalog drifting past ---- */
+.cfl{position:relative;overflow:hidden;margin-top:1.5em;padding:.3em 0}
+.cfl::before,.cfl::after{content:"";position:absolute;top:0;bottom:0;width:4em;z-index:2;pointer-events:none}
+.cfl::before{left:0;background:linear-gradient(90deg,var(--bg),rgba(255,255,255,0))}
+.cfl::after{right:0;background:linear-gradient(270deg,var(--bg),rgba(255,255,255,0))}
+.cfl-track{display:flex;width:max-content;animation:cflGo 30s linear infinite;will-change:transform}
+.cfl-track b{display:block;flex:none;width:9.4em;margin-right:.7em;background:var(--bg);
+  border:1px solid var(--line);border-radius:var(--r-md);padding:.65em .75em}
+.cfl-track b u{display:block;text-decoration:none;font-family:var(--mono);font-size:.6em;
+  color:var(--ink);font-weight:500;margin-bottom:.5em;white-space:nowrap}
+.cfl-track b s{display:block;text-decoration:none;height:.34em;border-radius:var(--pill);
+  background:var(--surf-2);margin-bottom:.26em}
+.cfl-track b s:last-child{width:58%;margin-bottom:0}
+@keyframes cflGo{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@media (prefers-reduced-motion:reduce){.cfl-track{animation:none}}
+
 .phone{
   width:17em;aspect-ratio:9/20;flex:none;border-radius:var(--r-xl);
   background:var(--bg);border:.42em solid var(--ink);overflow:hidden;
@@ -1209,10 +1228,11 @@ td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
     <div>
       <h2><i class="stp">STEP 2</i>Build the component</h2>
       <p style="font-size:1.08em;margin-top:.6em">Plain Flutter. No A2UI imports, no protocol code, no parsing.</p>
-      <div class="card" data-step="1" style="margin-top:1.3em">
-        <h3>Props arrive already resolved</h3>
-        <p>The renderer binds paths to the data model before your widget builds. You never see a JSON Pointer.</p>
+      <div class="prev" data-step="1">
+        <div class="lbl">ItineraryDayCard(day: 1, items: [...])</div>
+        <div class="w w-day"><div class="d">DAY 1</div><div class="it">Sayak to General Luna</div><div class="it">Sunset at Cloud 9</div></div>
       </div>
+      <p class="tiny" style="margin-top:.9em">Props arrive already resolved. The renderer binds paths to the data model before your widget builds, so you never see a JSON Pointer.</p>
     </div>
     <div>
 <pre><span class="k">class</span> <span class="t">ItineraryDayCard</span> <span class="k">extends</span> <span class="t">StatelessWidget</span> {
@@ -1238,12 +1258,13 @@ td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
   </div>
   <div class="notes"><h4>Fast. Twenty seconds, one press.</h4>
   <strong>This is the slide that relaxes the room.</strong> It is an ordinary widget. Nothing here knows A2UI exists.<br>
+  Press once and point between the two: that code, this card. The model never sees either one.<br>
   That is the whole promise of a declarative protocol: the model never touches your view code.<br>
   Press once for the card, then move to the catalog.</div>
 </section>
 
 <!-- STEP 3 CATALOG -->
-<section class="slide" data-sec="Design it" data-at="28" data-steps="1">
+<section class="slide" data-sec="Design it" data-at="28" data-steps="2">
   <div class="cols c2">
     <div>
       <h2><i class="stp">STEP 3</i>Define the catalog</h2>
@@ -1269,7 +1290,9 @@ td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
       <p class="tiny" style="margin-top:.9em">Every name, schema and description in here is serialized into the agent prompt. Component count is a recurring cost.</p>
     </div>
   </div>
-  <div class="notes"><h4>One press. This is the slide the security question lands on.</h4>
+  <div class="cfl" data-step="2"><div class="cfl-track"><b><u>Heading</u><s></s><s></s></b><b><u>ItineraryDay</u><s></s><s></s></b><b><u>CostBreakdown</u><s></s><s></s></b><b><u>PackingList</u><s></s><s></s></b><b><u>LocalNote</u><s></s><s></s></b><b><u>ChipRow</u><s></s><s></s></b><b><u>ActionBar</u><s></s><s></s></b><b><u>AltAirports</u><s></s><s></s></b><b><u>SlackMeter</u><s></s><s></s></b><b><u>BudgetSlider</u><s></s><s></s></b><b><u>FlexGrid</u><s></s><s></s></b><b><u>Heading</u><s></s><s></s></b><b><u>ItineraryDay</u><s></s><s></s></b><b><u>CostBreakdown</u><s></s><s></s></b><b><u>PackingList</u><s></s><s></s></b><b><u>LocalNote</u><s></s><s></s></b><b><u>ChipRow</u><s></s><s></s></b><b><u>ActionBar</u><s></s><s></s></b><b><u>AltAirports</u><s></s><s></s></b><b><u>SlackMeter</u><s></s><s></s></b><b><u>BudgetSlider</u><s></s><s></s></b><b><u>FlexGrid</u><s></s><s></s></b></div></div>
+  <div class="notes"><h4>Two presses. This is the slide the security question lands on.</h4>
+  Second press releases the strip: <strong>every name in it is a widget you wrote.</strong> Let it drift while you talk.<br>
   <strong>Say it: this list is the allowlist.</strong> Prompt injection can change what the text says. It cannot add an entry here.<br>
   The tiny line is the cost point. The whole catalog rides in the prompt on every request, which is why eight to twelve components is the sweet spot and forty is a bill.<br>
   If someone asks about versioning: the catalog has an id, and the client advertises which ones it supports.</div>
@@ -1686,7 +1709,7 @@ adapter.messages.listen(controller.handleMessage);
     <div class="card" data-step="1"><h3>Build a GenUI app</h3><p>Google's official codelab. Flutter, Firebase AI Logic and the genui package, from chat app to custom catalog component.</p><p class="src" style="margin-top:.6em">codelabs.developers.google.com/codelabs/genui-intro</p></div>
     <div class="card" data-step="2"><h3>Flutter GenUI, get started</h3><p>The short version. Add genui, genui_a2ui and a2a, then wire a catalog.</p><p class="src" style="margin-top:.6em">docs.flutter.dev/ai/genui</p></div>
     <div class="card" data-step="3"><h3>A2UI samples</h3><p>The restaurant finder agent and a Lit shell client, both runnable from the repo.</p><p class="src" style="margin-top:.6em">github.com/google/A2UI/tree/main/samples</p></div>
-    <div class="card gen" data-step="4"><h3>Slides</h3><p>This deck, with every link on it live and clickable.</p><p class="src" style="margin-top:.6em">a2ui.joshuadeguzman.dev</p></div>
+    <div class="card gen" data-step="4"><h3>Slides</h3><p>This deck, with every link on it live and clickable.</p><p class="src" style="margin-top:.6em">joshuamdeguzman.com/a2ui</p></div>
   </div>
   <div class="notes"><h4>Four presses. Third card is the one for students.</h4>
   Google's codelab is the safe recommendation for anyone who wants the official path. It uses Firebase AI Logic, so no key ends up in their source.<br>
@@ -1733,8 +1756,8 @@ adapter.messages.listen(controller.handleMessage);
 <section class="slide center" data-sec="Take it home" data-at="59">
   <h1 style="text-align:center;max-width:none;line-height:1.06">Go build something<br>great today.</h1>
   <p style="margin-top:1.1em;font-size:1.75em;font-weight:500;color:var(--gray)">Thank you!</p>
-  <div class="qr" style="margin:0 auto"><div class="qr-in"><svg viewBox="0 0 37 37" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img" aria-label="QR code to https://a2ui.joshuadeguzman.dev"><rect width="37" height="37" fill="#fff"/><path fill="#1B1B1F" d="M2 2h7v1h-7zM10 2h1v1h-1zM16 2h1v1h-1zM18 2h3v1h-3zM23 2h4v1h-4zM28 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM12 3h1v1h-1zM15 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM25 3h1v1h-1zM28 3h1v1h-1zM34 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM11 4h1v1h-1zM13 4h1v1h-1zM16 4h1v1h-1zM20 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM30 4h3v1h-3zM34 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h2v1h-2zM13 5h2v1h-2zM18 5h2v1h-2zM21 5h1v1h-1zM24 5h1v1h-1zM28 5h1v1h-1zM30 5h3v1h-3zM34 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM10 6h2v1h-2zM19 6h1v1h-1zM22 6h3v1h-3zM28 6h1v1h-1zM30 6h3v1h-3zM34 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM14 7h3v1h-3zM18 7h1v1h-1zM21 7h1v1h-1zM25 7h1v1h-1zM28 7h1v1h-1zM34 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h7v1h-7zM12 9h3v1h-3zM21 9h1v1h-1zM23 9h2v1h-2zM26 9h1v1h-1zM5 10h1v1h-1zM8 10h1v1h-1zM11 10h1v1h-1zM13 10h1v1h-1zM16 10h1v1h-1zM19 10h1v1h-1zM21 10h3v1h-3zM29 10h3v1h-3zM33 10h2v1h-2zM3 11h1v1h-1zM6 11h1v1h-1zM9 11h1v1h-1zM12 11h4v1h-4zM19 11h2v1h-2zM22 11h2v1h-2zM26 11h1v1h-1zM28 11h1v1h-1zM34 11h1v1h-1zM2 12h1v1h-1zM5 12h2v1h-2zM8 12h4v1h-4zM13 12h1v1h-1zM15 12h2v1h-2zM18 12h2v1h-2zM21 12h2v1h-2zM27 12h1v1h-1zM31 12h4v1h-4zM2 13h1v1h-1zM6 13h2v1h-2zM12 13h1v1h-1zM14 13h1v1h-1zM16 13h1v1h-1zM18 13h2v1h-2zM22 13h3v1h-3zM26 13h1v1h-1zM28 13h1v1h-1zM31 13h1v1h-1zM34 13h1v1h-1zM4 14h1v1h-1zM7 14h2v1h-2zM10 14h2v1h-2zM13 14h1v1h-1zM16 14h5v1h-5zM24 14h1v1h-1zM26 14h1v1h-1zM28 14h1v1h-1zM34 14h1v1h-1zM3 15h2v1h-2zM6 15h2v1h-2zM9 15h4v1h-4zM15 15h1v1h-1zM17 15h1v1h-1zM19 15h1v1h-1zM22 15h1v1h-1zM26 15h1v1h-1zM28 15h1v1h-1zM30 15h1v1h-1zM32 15h1v1h-1zM34 15h1v1h-1zM2 16h1v1h-1zM6 16h3v1h-3zM10 16h3v1h-3zM14 16h3v1h-3zM19 16h5v1h-5zM25 16h3v1h-3zM30 16h2v1h-2zM33 16h1v1h-1zM2 17h6v1h-6zM9 17h1v1h-1zM11 17h4v1h-4zM16 17h3v1h-3zM20 17h1v1h-1zM22 17h3v1h-3zM31 17h1v1h-1zM34 17h1v1h-1zM6 18h6v1h-6zM13 18h5v1h-5zM21 18h3v1h-3zM25 18h1v1h-1zM28 18h1v1h-1zM30 18h1v1h-1zM2 19h1v1h-1zM4 19h1v1h-1zM7 19h1v1h-1zM15 19h1v1h-1zM18 19h1v1h-1zM20 19h1v1h-1zM23 19h1v1h-1zM25 19h1v1h-1zM27 19h1v1h-1zM32 19h2v1h-2zM2 20h1v1h-1zM4 20h1v1h-1zM6 20h1v1h-1zM8 20h2v1h-2zM12 20h3v1h-3zM16 20h1v1h-1zM20 20h1v1h-1zM23 20h2v1h-2zM27 20h2v1h-2zM30 20h1v1h-1zM32 20h3v1h-3zM2 21h1v1h-1zM5 21h1v1h-1zM7 21h1v1h-1zM9 21h3v1h-3zM16 21h3v1h-3zM20 21h4v1h-4zM27 21h1v1h-1zM30 21h1v1h-1zM33 21h1v1h-1zM2 22h4v1h-4zM7 22h2v1h-2zM10 22h2v1h-2zM13 22h4v1h-4zM21 22h3v1h-3zM25 22h3v1h-3zM3 23h1v1h-1zM11 23h1v1h-1zM13 23h1v1h-1zM15 23h3v1h-3zM19 23h3v1h-3zM25 23h1v1h-1zM28 23h1v1h-1zM31 23h1v1h-1zM34 23h1v1h-1zM2 24h2v1h-2zM7 24h2v1h-2zM11 24h2v1h-2zM17 24h1v1h-1zM21 24h2v1h-2zM24 24h1v1h-1zM26 24h4v1h-4zM34 24h1v1h-1zM3 25h2v1h-2zM6 25h2v1h-2zM11 25h1v1h-1zM14 25h1v1h-1zM16 25h2v1h-2zM20 25h2v1h-2zM23 25h6v1h-6zM31 25h1v1h-1zM33 25h2v1h-2zM2 26h1v1h-1zM5 26h2v1h-2zM8 26h4v1h-4zM14 26h1v1h-1zM16 26h2v1h-2zM21 26h3v1h-3zM26 26h6v1h-6zM10 27h4v1h-4zM19 27h4v1h-4zM24 27h1v1h-1zM26 27h1v1h-1zM30 27h2v1h-2zM34 27h1v1h-1zM2 28h7v1h-7zM11 28h1v1h-1zM13 28h3v1h-3zM18 28h2v1h-2zM21 28h1v1h-1zM23 28h1v1h-1zM26 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM32 28h2v1h-2zM2 29h1v1h-1zM8 29h1v1h-1zM11 29h1v1h-1zM13 29h6v1h-6zM21 29h1v1h-1zM26 29h1v1h-1zM30 29h1v1h-1zM34 29h1v1h-1zM2 30h1v1h-1zM4 30h3v1h-3zM8 30h1v1h-1zM11 30h1v1h-1zM16 30h4v1h-4zM21 30h2v1h-2zM24 30h1v1h-1zM26 30h5v1h-5zM2 31h1v1h-1zM4 31h3v1h-3zM8 31h1v1h-1zM10 31h1v1h-1zM12 31h1v1h-1zM14 31h1v1h-1zM18 31h1v1h-1zM20 31h3v1h-3zM25 31h2v1h-2zM28 31h1v1h-1zM30 31h3v1h-3zM34 31h1v1h-1zM2 32h1v1h-1zM4 32h3v1h-3zM8 32h1v1h-1zM11 32h1v1h-1zM13 32h2v1h-2zM17 32h1v1h-1zM19 32h3v1h-3zM24 32h4v1h-4zM29 32h2v1h-2zM34 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM11 33h2v1h-2zM14 33h3v1h-3zM22 33h1v1h-1zM25 33h6v1h-6zM2 34h7v1h-7zM11 34h1v1h-1zM13 34h2v1h-2zM16 34h3v1h-3zM21 34h4v1h-4zM26 34h1v1h-1zM28 34h4v1h-4zM33 34h1v1h-1z"/></svg></div></div>
-  <p class="grad-text" style="margin-top:1em;font-size:1.5em;font-weight:600;letter-spacing:-.02em">a2ui.joshuadeguzman.dev</p>
+  <div class="qr" style="margin:0 auto"><div class="qr-in"><svg viewBox="0 0 37 37" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img" aria-label="QR code to https://joshuamdeguzman.com/a2ui"><rect width="37" height="37" fill="#fff"/><path fill="#1B1B1F" d="M2 2h7v1h-7zM13 2h1v1h-1zM16 2h1v1h-1zM20 2h1v1h-1zM24 2h1v1h-1zM26 2h1v1h-1zM28 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM12 3h1v1h-1zM15 3h5v1h-5zM21 3h1v1h-1zM24 3h1v1h-1zM28 3h1v1h-1zM34 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM10 4h5v1h-5zM16 4h1v1h-1zM19 4h1v1h-1zM21 4h3v1h-3zM26 4h1v1h-1zM28 4h1v1h-1zM30 4h3v1h-3zM34 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h3v1h-3zM14 5h3v1h-3zM18 5h1v1h-1zM20 5h2v1h-2zM23 5h3v1h-3zM28 5h1v1h-1zM30 5h3v1h-3zM34 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM10 6h3v1h-3zM15 6h1v1h-1zM17 6h2v1h-2zM20 6h2v1h-2zM24 6h3v1h-3zM28 6h1v1h-1zM30 6h3v1h-3zM34 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h6v1h-6zM18 7h3v1h-3zM22 7h3v1h-3zM26 7h1v1h-1zM28 7h1v1h-1zM34 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h7v1h-7zM11 9h2v1h-2zM14 9h1v1h-1zM17 9h2v1h-2zM20 9h2v1h-2zM4 10h1v1h-1zM7 10h5v1h-5zM13 10h1v1h-1zM18 10h2v1h-2zM21 10h1v1h-1zM26 10h2v1h-2zM29 10h5v1h-5zM2 11h1v1h-1zM5 11h1v1h-1zM9 11h2v1h-2zM12 11h3v1h-3zM16 11h2v1h-2zM25 11h1v1h-1zM27 11h3v1h-3zM31 11h1v1h-1zM34 11h1v1h-1zM3 12h3v1h-3zM8 12h1v1h-1zM14 12h2v1h-2zM18 12h1v1h-1zM20 12h8v1h-8zM29 12h2v1h-2zM34 12h1v1h-1zM2 13h1v1h-1zM4 13h1v1h-1zM13 13h7v1h-7zM22 13h1v1h-1zM25 13h2v1h-2zM29 13h1v1h-1zM31 13h1v1h-1zM34 13h1v1h-1zM4 14h1v1h-1zM6 14h4v1h-4zM11 14h2v1h-2zM15 14h2v1h-2zM18 14h2v1h-2zM21 14h4v1h-4zM26 14h1v1h-1zM28 14h1v1h-1zM33 14h1v1h-1zM4 15h1v1h-1zM6 15h2v1h-2zM9 15h4v1h-4zM14 15h1v1h-1zM16 15h1v1h-1zM19 15h2v1h-2zM23 15h1v1h-1zM25 15h4v1h-4zM31 15h2v1h-2zM34 15h1v1h-1zM3 16h1v1h-1zM5 16h4v1h-4zM10 16h1v1h-1zM12 16h2v1h-2zM15 16h1v1h-1zM17 16h3v1h-3zM22 16h1v1h-1zM25 16h1v1h-1zM30 16h1v1h-1zM32 16h1v1h-1zM34 16h1v1h-1zM2 17h1v1h-1zM4 17h1v1h-1zM6 17h1v1h-1zM11 17h2v1h-2zM14 17h4v1h-4zM22 17h1v1h-1zM24 17h1v1h-1zM27 17h1v1h-1zM4 18h2v1h-2zM7 18h4v1h-4zM12 18h2v1h-2zM15 18h1v1h-1zM17 18h3v1h-3zM21 18h1v1h-1zM24 18h2v1h-2zM28 18h2v1h-2zM31 18h1v1h-1zM33 18h2v1h-2zM2 19h3v1h-3zM9 19h2v1h-2zM12 19h4v1h-4zM20 19h1v1h-1zM25 19h1v1h-1zM28 19h2v1h-2zM32 19h1v1h-1zM34 19h1v1h-1zM3 20h2v1h-2zM7 20h2v1h-2zM10 20h2v1h-2zM13 20h2v1h-2zM20 20h4v1h-4zM25 20h1v1h-1zM27 20h3v1h-3zM31 20h2v1h-2zM34 20h1v1h-1zM3 21h3v1h-3zM7 21h1v1h-1zM9 21h2v1h-2zM12 21h1v1h-1zM17 21h1v1h-1zM21 21h1v1h-1zM25 21h1v1h-1zM28 21h1v1h-1zM30 21h2v1h-2zM33 21h2v1h-2zM2 22h2v1h-2zM8 22h1v1h-1zM12 22h2v1h-2zM15 22h1v1h-1zM18 22h1v1h-1zM20 22h3v1h-3zM25 22h2v1h-2zM28 22h2v1h-2zM5 23h2v1h-2zM9 23h2v1h-2zM12 23h2v1h-2zM18 23h5v1h-5zM25 23h5v1h-5zM31 23h2v1h-2zM34 23h1v1h-1zM2 24h2v1h-2zM5 24h1v1h-1zM8 24h1v1h-1zM10 24h1v1h-1zM12 24h2v1h-2zM15 24h7v1h-7zM24 24h2v1h-2zM27 24h2v1h-2zM34 24h1v1h-1zM4 25h1v1h-1zM7 25h1v1h-1zM13 25h3v1h-3zM17 25h5v1h-5zM24 25h1v1h-1zM26 25h1v1h-1zM31 25h1v1h-1zM33 25h1v1h-1zM2 26h5v1h-5zM8 26h1v1h-1zM10 26h2v1h-2zM14 26h1v1h-1zM19 26h1v1h-1zM21 26h2v1h-2zM25 26h6v1h-6zM34 26h1v1h-1zM10 27h4v1h-4zM15 27h5v1h-5zM21 27h1v1h-1zM23 27h1v1h-1zM26 27h1v1h-1zM30 27h2v1h-2zM34 27h1v1h-1zM2 28h7v1h-7zM10 28h1v1h-1zM12 28h1v1h-1zM17 28h1v1h-1zM19 28h2v1h-2zM22 28h1v1h-1zM26 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM32 28h1v1h-1zM34 28h1v1h-1zM2 29h1v1h-1zM8 29h1v1h-1zM10 29h2v1h-2zM13 29h5v1h-5zM20 29h1v1h-1zM23 29h1v1h-1zM25 29h2v1h-2zM30 29h2v1h-2zM33 29h2v1h-2zM2 30h1v1h-1zM4 30h3v1h-3zM8 30h1v1h-1zM11 30h3v1h-3zM15 30h1v1h-1zM17 30h1v1h-1zM19 30h1v1h-1zM23 30h1v1h-1zM25 30h6v1h-6zM2 31h1v1h-1zM4 31h3v1h-3zM8 31h1v1h-1zM11 31h4v1h-4zM16 31h1v1h-1zM18 31h2v1h-2zM22 31h1v1h-1zM25 31h1v1h-1zM27 31h1v1h-1zM29 31h4v1h-4zM34 31h1v1h-1zM2 32h1v1h-1zM4 32h3v1h-3zM8 32h1v1h-1zM10 32h2v1h-2zM14 32h1v1h-1zM19 32h1v1h-1zM22 32h2v1h-2zM25 32h2v1h-2zM30 32h1v1h-1zM33 32h2v1h-2zM2 33h1v1h-1zM8 33h1v1h-1zM11 33h1v1h-1zM19 33h2v1h-2zM24 33h1v1h-1zM26 33h2v1h-2zM31 33h1v1h-1zM2 34h7v1h-7zM11 34h1v1h-1zM13 34h1v1h-1zM16 34h2v1h-2zM22 34h3v1h-3zM26 34h1v1h-1zM28 34h1v1h-1zM30 34h2v1h-2zM34 34h1v1h-1z"/></svg></div></div>
+  <p class="grad-text" style="margin-top:1em;font-size:1.5em;font-weight:600;letter-spacing:-.02em">joshuamdeguzman.com/a2ui</p>
   <div class="notes"><h4>Q&amp;A, the four you will get</h4>
   <strong>Cost per screen?</strong> Depends on model and catalog size. Push the hybrid, and say the catalog rides in every prompt.<br>
   <strong>Prompt injection?</strong> Structure is safe by allowlist. Content is not.<br>
