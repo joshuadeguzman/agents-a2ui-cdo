@@ -20,7 +20,7 @@ This folder is the **single source of truth** for the widget catalog. The agent,
 | `Heading` | Page or section header: `title`, optional `eyebrow`, `subtitle`, and a 16:9 hero `image`. |
 | `ItineraryDay` | One day of a plan (`day`, `title`, timeline `items` of `{time, activity, note?}`). Also good for any timed list, like flights. |
 | `CostBreakdown` | A list of `{label, amount}` lines in a `currency`. The app computes the total. |
-| `StayCard` | One bookable option: `image`, `name`, `area`, `note`, `pricePerNight`, `rating`, and a button `action`. |
+| `StayCard` | One bookable option: `image`, `name`, `area`, `note`, `pricePerNight` (with an optional `priceUnit`, default "per night"), `rating`, and a button `action`. |
 | `BudgetSlider` | Two-way budget input bound to a data model number. |
 | `ChipRow` | Two-way single or multi select chips bound to a data model string array. |
 | `LocalNote` | Callout for a `tip`, a `heads_up` warning, or a `local` insider note. |

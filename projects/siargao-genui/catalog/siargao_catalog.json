@@ -203,6 +203,11 @@
               "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber",
               "description": "Price as a plain number in the card currency. For a stay it is the price per night. No symbols or commas."
             },
+            "priceUnit": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Short text shown after the price. Defaults to 'per night'. Set it when the card is not a stay, for example 'one way' for a flight.",
+              "default": "per night"
+            },
             "currency": {
               "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
               "description": "ISO 4217 currency code for the price. Defaults to PHP.",
