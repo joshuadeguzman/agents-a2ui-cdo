@@ -1,0 +1,19 @@
+# Tool config for the Siargao MCP server. Dependencies are pinned in
+# requirements.txt and requirements-dev.txt.
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = [".venv", "catalog", "data", "surfaces", "templates"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff.lint.isort]
+known-first-party = ["siargao_mcp", "conftest"]

@@ -1,0 +1,8 @@
+# Runtime dependencies for the Siargao MCP server. Python 3.12.
+# Direct imports are pinned exactly. Transitive versions come from mcp.
+mcp==2.3.0
+starlette==1.8.0
+uvicorn==0.54.0
+pydantic==2.14.1
+jsonschema==4.26.0
+referencing==0.37.0
