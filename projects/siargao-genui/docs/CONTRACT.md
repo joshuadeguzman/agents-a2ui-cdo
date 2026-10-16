@@ -90,3 +90,22 @@ The MCP server puts the same object in the tool result `_meta.siargao` and the r
 
 - A2UI over MCP: `application/a2ui+json` (resource and embedded tool result).
 - A2UI inside an A2A DataPart: a2ui-agent-sdk 0.8.0 also uses `application/a2ui+json` (`a2ui/a2a/parts.py`). The older `application/json+a2ui` is marked deprecated there. Some docs pages still show the old one.
+
+## Request metadata (app to agent)
+
+The app sends A2A `message/stream` (JSON-RPC, A2A 0.3) with one text part (the prompt) and this message `metadata`:
+
+```json
+{"siargao": {"responseFormat": "a2ui", "intent": "first_time_trip"}}
+```
+
+- `responseFormat` is `a2ui` (default) or `text`. For `text` the agent answers with a markdown TextPart only, which feeds the plain text side of the Chat toggle.
+- `intent` is optional. When the user taps a demo prompt chip the app passes the intent so routing is exact. Free-typed prompts omit it and the agent routes by keywords, then falls back to the model.
+- A2UI arrives as DataParts, one A2UI message per part, in order: createSurface, updateComponents, updateDataModel.
+- User actions (for example StayCard "Choose") go back as a DataPart `{"version": "v0.9", "action": {"name", "sourceComponentId", "surfaceId", "context", "timestamp"}}`, the same shape `genui_a2a` uses. The agent replies with a short text confirmation.
+
+## MCP surface
+
+- `resources/read` with `uri: a2ui://home/first-run` returns `contents[0]` with `mimeType: application/a2ui+json` and `text` set to the JSON array of A2UI messages.
+- `tools/call` with `name: search_stays`, `arguments: {area, nights, max_price}` returns `content` with one item `{"type": "resource", "resource": {"uri": "a2ui://search/stays", "mimeType": "application/a2ui+json", "text": "<JSON array of A2UI messages>"}}` plus a short text item summarising the results.
+- The app calls these over Streamable HTTP with plain JSON-RPC POSTs (`Accept: application/json, text/event-stream`).
