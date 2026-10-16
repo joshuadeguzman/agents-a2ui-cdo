@@ -1,0 +1,214 @@
+{
+  "intent": "returning_flexible",
+  "title": "Returning traveler, flexible dates",
+  "prompt": "I've been to Siargao before. My dates are flexible. Where should I go this time?",
+  "keywords": [],
+  "text": "## Siargao, the quieter side\n\nWelcome back. Since you have done the classics, here is how to plan a flexible return trip.\n\n**When to go**\n- March to June: calm water, easy island hopping, cheaper rooms.\n- September to November: biggest swell and the surf cup crowds at Cloud 9.\n\n**Suggested setup:** 1 week in April or May, stays up to PHP 3,500 per night (sample price).\n\n**Lesser-known spots**\n- **Pacifico** (North east coast): Long quiet beach and uncrowded waves. Stay two nights instead of a day trip.\n- **Magpupungko rock pools** (Pilar, low tide only): Go on a weekday morning at low tide. Check the tide table the night before.\n- **Sugba Lagoon by paddle board** (Del Carmen): Skip the jump platform crowd and paddle into the mangroves early.\n\nTell me your months, trip length and nightly budget and I will find dates and prices.",
+  "messages": [
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "returning_flexible",
+        "catalogId": "https://siargao-genui.example/catalogs/v1/catalog.json"
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "returning_flexible",
+        "components": [
+          {
+            "id": "root",
+            "component": "Stack",
+            "children": [
+              "hero",
+              "when-chips",
+              "length-chips",
+              "budget-slider",
+              "spots-heading",
+              "spots-grid",
+              "local-note",
+              "next-actions"
+            ],
+            "gap": "medium"
+          },
+          {
+            "id": "hero",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/hero/eyebrow"
+            },
+            "title": {
+              "path": "/hero/title"
+            },
+            "subtitle": {
+              "path": "/hero/subtitle"
+            }
+          },
+          {
+            "id": "when-chips",
+            "component": "ChipRow",
+            "label": {
+              "path": "/when/label"
+            },
+            "options": {
+              "path": "/when/options"
+            },
+            "selected": {
+              "path": "/prefs/months"
+            },
+            "multiSelect": true
+          },
+          {
+            "id": "length-chips",
+            "component": "ChipRow",
+            "label": {
+              "path": "/length/label"
+            },
+            "options": {
+              "path": "/length/options"
+            },
+            "selected": {
+              "path": "/prefs/length"
+            },
+            "multiSelect": false
+          },
+          {
+            "id": "budget-slider",
+            "component": "BudgetSlider",
+            "label": {
+              "path": "/budgetLabel"
+            },
+            "min": 1000,
+            "max": 10000,
+            "step": 500,
+            "value": {
+              "path": "/prefs/maxPerNight"
+            },
+            "currency": "PHP"
+          },
+          {
+            "id": "spots-heading",
+            "component": "Heading",
+            "title": {
+              "path": "/spotsHeading/title"
+            },
+            "subtitle": {
+              "path": "/spotsHeading/subtitle"
+            }
+          },
+          {
+            "id": "spots-grid",
+            "component": "FlexGrid",
+            "children": [
+              "spot-1",
+              "spot-2",
+              "spot-3"
+            ],
+            "minItemWidth": 260
+          },
+          {
+            "id": "spot-1",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/spots/0/eyebrow"
+            },
+            "title": {
+              "path": "/spots/0/title"
+            },
+            "subtitle": {
+              "path": "/spots/0/subtitle"
+            },
+            "image": {
+              "path": "/spots/0/image"
+            }
+          },
+          {
+            "id": "spot-2",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/spots/1/eyebrow"
+            },
+            "title": {
+              "path": "/spots/1/title"
+            },
+            "subtitle": {
+              "path": "/spots/1/subtitle"
+            },
+            "image": {
+              "path": "/spots/1/image"
+            }
+          },
+          {
+            "id": "spot-3",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/spots/2/eyebrow"
+            },
+            "title": {
+              "path": "/spots/2/title"
+            },
+            "subtitle": {
+              "path": "/spots/2/subtitle"
+            },
+            "image": {
+              "path": "/spots/2/image"
+            }
+          },
+          {
+            "id": "local-note",
+            "component": "LocalNote",
+            "title": {
+              "path": "/note/title"
+            },
+            "body": {
+              "path": "/note/body"
+            },
+            "tone": "local",
+            "author": {
+              "path": "/note/author"
+            }
+          },
+          {
+            "id": "next-actions",
+            "component": "Actions",
+            "buttons": [
+              {
+                "label": "Find dates and prices",
+                "style": "primary",
+                "action": {
+                  "event": {
+                    "name": "plan_flexible_trip",
+                    "context": {
+                      "months": {
+                        "path": "/prefs/months"
+                      },
+                      "length": {
+                        "path": "/prefs/length"
+                      },
+                      "maxPerNight": {
+                        "path": "/prefs/maxPerNight"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "label": "Show me more spots",
+                "style": "secondary",
+                "action": {
+                  "event": {
+                    "name": "more_spots",
+                    "context": {
+                      "intent": "returning_flexible"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

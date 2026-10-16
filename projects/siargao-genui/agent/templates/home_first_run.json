@@ -1,0 +1,142 @@
+{
+  "intent": "home_first_run",
+  "title": "Home, first run",
+  "prompt": "Read resource a2ui://home/first-run",
+  "keywords": [],
+  "text": "## Plan your Siargao trip\n\nSurf breaks, island hopping and lagoons. Ask anything, or start with one of these:\n\n- First trip, 4 days\n- Flights under 8,000\n- Surf this week\n- Stays near Cloud 9\n- Flexible dates\n\n**Featured spots**\n- **Sugba Lagoon** (Del Carmen): Turquoise lagoon in the mangroves. Paddle board, swim, jump.\n- **Guyam Island** (Island hopping): A tiny palm island 15 minutes by boat from General Luna.\n- **Magpupungko rock pools** (Pilar): Natural pools that appear at low tide on the east coast.\n\n**Best time to go:** March to October is the drier stretch. November to February brings more rain and rougher boat rides, so keep a spare day in your plan.",
+  "messages": [
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "home_first_run",
+        "catalogId": "https://siargao-genui.example/catalogs/v1/catalog.json"
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "home_first_run",
+        "components": [
+          {
+            "id": "root",
+            "component": "Stack",
+            "children": [
+              "hero",
+              "quick-chips",
+              "featured-heading",
+              "featured-grid",
+              "local-note"
+            ],
+            "gap": "large"
+          },
+          {
+            "id": "hero",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/hero/eyebrow"
+            },
+            "title": {
+              "path": "/hero/title"
+            },
+            "subtitle": {
+              "path": "/hero/subtitle"
+            },
+            "image": {
+              "path": "/hero/image"
+            }
+          },
+          {
+            "id": "quick-chips",
+            "component": "ChipRow",
+            "label": {
+              "path": "/quick/label"
+            },
+            "options": {
+              "path": "/quick/options"
+            },
+            "selected": {
+              "path": "/quick/selected"
+            },
+            "multiSelect": false
+          },
+          {
+            "id": "featured-heading",
+            "component": "Heading",
+            "title": {
+              "path": "/featuredHeading"
+            }
+          },
+          {
+            "id": "featured-grid",
+            "component": "FlexGrid",
+            "children": [
+              "spot-1",
+              "spot-2",
+              "spot-3"
+            ],
+            "minItemWidth": 240
+          },
+          {
+            "id": "spot-1",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/featured/0/eyebrow"
+            },
+            "title": {
+              "path": "/featured/0/title"
+            },
+            "subtitle": {
+              "path": "/featured/0/subtitle"
+            },
+            "image": {
+              "path": "/featured/0/image"
+            }
+          },
+          {
+            "id": "spot-2",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/featured/1/eyebrow"
+            },
+            "title": {
+              "path": "/featured/1/title"
+            },
+            "subtitle": {
+              "path": "/featured/1/subtitle"
+            },
+            "image": {
+              "path": "/featured/1/image"
+            }
+          },
+          {
+            "id": "spot-3",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/featured/2/eyebrow"
+            },
+            "title": {
+              "path": "/featured/2/title"
+            },
+            "subtitle": {
+              "path": "/featured/2/subtitle"
+            },
+            "image": {
+              "path": "/featured/2/image"
+            }
+          },
+          {
+            "id": "local-note",
+            "component": "LocalNote",
+            "title": {
+              "path": "/note/title"
+            },
+            "body": {
+              "path": "/note/body"
+            },
+            "tone": "tip"
+          }
+        ]
+      }
+    }
+  ]
+}

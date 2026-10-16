@@ -1,0 +1,44 @@
+{
+  "hero": {
+    "eyebrow": "Siargao, Surigao del Norte",
+    "title": "Plan your Siargao trip",
+    "subtitle": "Surf breaks, island hopping and lagoons. Ask anything or start with a quick pick.",
+    "image": "cloud-9-boardwalk"
+  },
+  "quick": {
+    "label": "Start with",
+    "options": [
+      "First trip, 4 days",
+      "Flights under 8,000",
+      "Surf this week",
+      "Stays near Cloud 9",
+      "Flexible dates"
+    ],
+    "selected": []
+  },
+  "featuredHeading": "Featured spots",
+  "featured": [
+    {
+      "eyebrow": "Del Carmen",
+      "title": "Sugba Lagoon",
+      "subtitle": "Turquoise lagoon in the mangroves. Paddle board, swim, jump.",
+      "image": "sugba-lagoon"
+    },
+    {
+      "eyebrow": "Island hopping",
+      "title": "Guyam Island",
+      "subtitle": "A tiny palm island 15 minutes by boat from General Luna.",
+      "image": "guyam-island"
+    },
+    {
+      "eyebrow": "Pilar",
+      "title": "Magpupungko rock pools",
+      "subtitle": "Natural pools that appear at low tide on the east coast.",
+      "image": "magpupungko-pools"
+    }
+  ],
+  "note": {
+    "title": "Best time to go",
+    "body": "March to October is the drier stretch. November to February brings more rain and rougher boat rides, so keep a spare day in your plan."
+  }
+}

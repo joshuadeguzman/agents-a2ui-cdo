@@ -1,0 +1,92 @@
+{
+  "hero": {
+    "eyebrow": "Sample fares, not live",
+    "title": "Flights to Siargao under PHP 8,000",
+    "subtitle": "Direct one-way flights to Sayak Airport (IAO) in Del Carmen, cheapest first.",
+    "image": "siargao-flight"
+  },
+  "origins": {
+    "label": "Flying from",
+    "options": [
+      "Manila",
+      "Cebu",
+      "Clark"
+    ]
+  },
+  "search": {
+    "origins": [
+      "Manila",
+      "Cebu",
+      "Clark"
+    ],
+    "maxFare": 8000,
+    "maxFareLabel": "Max fare, one way"
+  },
+  "flights": [
+    {
+      "id": "ceb-iao-morning",
+      "name": "Cebu to Siargao",
+      "route": "CEB to IAO, direct, about 1h",
+      "note": "Morning departure, 7 kg carry-on included",
+      "fare": 2980,
+      "origin": "Cebu"
+    },
+    {
+      "id": "ceb-iao-midday",
+      "name": "Cebu to Siargao",
+      "route": "CEB to IAO, direct, about 1h",
+      "note": "Midday departure, 20 kg checked bag included",
+      "fare": 3650,
+      "origin": "Cebu"
+    },
+    {
+      "id": "mnl-iao-early",
+      "name": "Manila to Siargao",
+      "route": "MNL to IAO, direct, about 1h 45m",
+      "note": "Early morning departure, 7 kg carry-on included",
+      "fare": 4890,
+      "origin": "Manila"
+    },
+    {
+      "id": "crk-iao-morning",
+      "name": "Clark to Siargao",
+      "route": "CRK to IAO, direct, about 1h 55m",
+      "note": "Morning departure, skips Manila traffic",
+      "fare": 5420,
+      "origin": "Clark"
+    },
+    {
+      "id": "mnl-iao-midday",
+      "name": "Manila to Siargao",
+      "route": "MNL to IAO, direct, about 1h 50m",
+      "note": "Late morning departure, 20 kg checked bag included",
+      "fare": 6750,
+      "origin": "Manila"
+    }
+  ],
+  "breakdown": {
+    "title": "What the PHP 4,890 Manila fare includes (sample)",
+    "items": [
+      {
+        "label": "Base fare",
+        "amount": 3290
+      },
+      {
+        "label": "Fuel surcharge",
+        "amount": 620
+      },
+      {
+        "label": "Taxes and airport fees",
+        "amount": 680
+      },
+      {
+        "label": "Booking and service fees",
+        "amount": 300
+      }
+    ]
+  },
+  "note": {
+    "title": "Watch the baggage",
+    "body": "Promo fares usually include only a 7 kg carry-on. Add checked bags or a surfboard when you book: it costs far less online than at the airport counter."
+  }
+}
