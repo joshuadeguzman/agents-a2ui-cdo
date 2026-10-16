@@ -124,9 +124,9 @@ class SiargaoHeading extends StatelessWidget {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(flex: 11, child: image),
+            Expanded(child: image),
             const SizedBox(width: Gaps.xxl),
-            Expanded(flex: 9, child: _texts(context, large: true)),
+            Expanded(child: _texts(context, large: true)),
           ],
         );
       },

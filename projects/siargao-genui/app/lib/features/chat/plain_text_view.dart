@@ -3,6 +3,22 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 import '../../theme/app_theme.dart';
 
+/// Glues the last two words of markdown headings and bold-only lines so a
+/// wrapped heading never leaves one word alone on its last line.
+String gluePhraseEnds(String markdown) {
+  final RegExp heading = RegExp(r'^(#{1,6} |\*\*).*');
+  return markdown
+      .split('\n')
+      .map((line) {
+        final String t = line.trimRight();
+        if (!heading.hasMatch(t)) return line;
+        final int i = t.lastIndexOf(' ');
+        if (i <= 0 || t.length - i > 16) return line;
+        return '${t.substring(0, i)}\u00A0${t.substring(i + 1)}';
+      })
+      .join('\n');
+}
+
 /// Renders the agent's markdown answer in a readable card.
 class PlainTextView extends StatelessWidget {
   /// Creates a [PlainTextView].
@@ -31,7 +47,7 @@ class PlainTextView extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 22, 24, 24),
-        child: MarkdownBody(data: markdown, styleSheet: sheet),
+        child: MarkdownBody(data: gluePhraseEnds(markdown), styleSheet: sheet),
       ),
     );
   }

@@ -91,7 +91,7 @@ class ItineraryDayCard extends StatelessWidget {
           if (imageKey != null)
             SiargaoImage(
               imageKey: imageKey,
-              aspectRatio: 2 / 1,
+              aspectRatio: 3 / 1,
               borderRadius: BorderRadius.zero,
               showAlt: false,
             ),

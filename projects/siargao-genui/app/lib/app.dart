@@ -122,8 +122,11 @@ class _AppShellState extends State<AppShell> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            const Icon(Icons.waves_rounded, color: AppColors.teal, size: 28),
-            const SizedBox(width: Gaps.sm),
+            // On phones the back button takes the logo's room.
+            if (wide || !_gallery) ...[
+              const Icon(Icons.waves_rounded, color: AppColors.teal, size: 28),
+              const SizedBox(width: Gaps.sm),
+            ],
             Flexible(
               child: Text(
                 'Siargao Planner',
@@ -182,7 +185,8 @@ class _AppShellState extends State<AppShell> {
               ],
             )
           : content,
-      bottomNavigationBar: wide
+      // The gallery is not a tab, so phones hide the tab bar while it shows.
+      bottomNavigationBar: wide || _gallery
           ? null
           : NavigationBar(
               selectedIndex: _index,

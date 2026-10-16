@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
+import 'binding.dart';
 import 'catalog_schemas.g.dart';
 
 /// Maps image keys from catalog/images.json to bundled assets at
@@ -187,7 +188,7 @@ class ImagePlaceholder extends StatelessWidget {
               right: 14,
               bottom: 12,
               child: Text(
-                alt!,
+                noWidow(alt!),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: altStyle,
