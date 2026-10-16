@@ -1,0 +1,16 @@
+Google Sans Flex, SIL Open Font License 1.1 (see OFL.txt).
+
+Source: https://github.com/google/fonts/tree/main/ofl/googlesansflex
+File:   GoogleSansFlex[ROND,opsz,slnt,wdth,wght].ttf
+
+The four TTFs here are static instances of that variable font, made with
+fontTools so every platform (and the golden tests) gets real weights:
+
+  fonttools varLib.instancer GoogleSansFlex[...].ttf wght=<400|500|600|700> \
+    opsz=18 wdth=100 ROND=0 slnt=0 --static
+  pyftsubset <instance>.ttf --layout-features='*' \
+    --unicodes=U+0000-024F,U+0300-036F,U+1E00-1EFF,U+2000-206F,U+20A0-20CF,\
+U+2100-214F,U+2190-21FF,U+2212,U+2215,U+25A0-25FF,U+2600-26FF
+
+The font has no peso sign, so the app writes prices as "PHP 4,500".
+Nothing is fetched at runtime; the app works offline.

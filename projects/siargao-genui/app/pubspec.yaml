@@ -1,0 +1,44 @@
+name: siargao_genui
+description: "Siargao travel planner that renders A2UI v0.9 surfaces with its own widgets, a DevFest Manila demo."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  a2ui_core: 0.1.1
+  collection: 1.19.1
+  flutter_markdown_plus: 1.0.12
+  genui: 0.10.4
+  genui_a2a: 0.10.1
+  http: 1.6.0
+  intl: 0.20.2
+  json_schema_builder: 0.1.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fixtures/
+    - assets/catalog/
+    - assets/img/
+
+  fonts:
+    - family: GoogleSansFlex
+      fonts:
+        - asset: assets/fonts/GoogleSansFlex-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/GoogleSansFlex-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/GoogleSansFlex-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/GoogleSansFlex-Bold.ttf
+          weight: 700

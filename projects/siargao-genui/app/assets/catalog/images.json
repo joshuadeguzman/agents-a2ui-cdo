@@ -1,0 +1,19 @@
+{
+  "description": "Image keys the catalog accepts. Components reference images by key only. The app maps a key to app/assets/img/<key>.jpg (then .png, then .webp) and shows a placeholder when no file exists.",
+  "images": [
+    {"key": "cloud-9-boardwalk", "alt": "The wooden Cloud 9 boardwalk stretching out over the reef toward the surf break at sunrise"},
+    {"key": "sugba-lagoon", "alt": "Turquoise water of Sugba Lagoon in Del Carmen, ringed by mangroves and limestone hills"},
+    {"key": "guyam-island", "alt": "Tiny Guyam Island with a ring of white sand and a cluster of coconut palms"},
+    {"key": "naked-island", "alt": "Naked Island, a bare white sandbar surrounded by clear shallow water"},
+    {"key": "magpupungko-pools", "alt": "Magpupungko rock pools in Pilar at low tide, clear water between dark rocks"},
+    {"key": "maasin-river", "alt": "The bent coconut tree rope swing over the green Maasin river"},
+    {"key": "pacifico-beach", "alt": "Long quiet beach and gentle waves at Pacifico on the north east coast"},
+    {"key": "siargao-flight", "alt": "A small passenger plane on the runway at Sayak Airport, Siargao"},
+    {"key": "stay-cloud9-surf-cabins", "alt": "Wooden surf cabins with thatched roofs a short walk from Cloud 9"},
+    {"key": "stay-general-luna-hostel", "alt": "Bright hostel common area with hammocks and surfboards in General Luna"},
+    {"key": "stay-palm-villa", "alt": "Private villa with a small pool under coconut palms"},
+    {"key": "stay-catangnan-bungalows", "alt": "Garden bungalows with porches in Catangnan, near the Cloud 9 road"},
+    {"key": "stay-boardwalk-homestay", "alt": "Simple family run homestay room with a fan and a view of the palms"},
+    {"key": "stay-pacifico-surf-camp", "alt": "Beachfront surf camp huts at Pacifico with boards lined up outside"}
+  ]
+}
