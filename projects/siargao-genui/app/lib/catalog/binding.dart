@@ -218,5 +218,5 @@ String noWidow(String text) {
   final String tail = t.substring(i + 1);
   // Only glue short tails; gluing long words can force awkward breaks.
   if (tail.length > 12 || !head.contains(' ')) return t;
-  return '$head $tail';
+  return '$head\u00A0$tail';
 }
