@@ -1,0 +1,70 @@
+{
+  "hero": {
+    "eyebrow": "Surf report, sample data",
+    "title": "Siargao surf this week",
+    "subtitle": "Small and friendly early in the week, a bigger swell from Thursday. Light offshore winds before 9am.",
+    "image": "cloud-9-boardwalk"
+  },
+  "levels": {
+    "label": "Your level",
+    "options": [
+      "Beginner",
+      "Intermediate",
+      "Advanced"
+    ]
+  },
+  "prefs": {
+    "level": [
+      "Beginner"
+    ]
+  },
+  "breaks": {
+    "beginner": [
+      {
+        "eyebrow": "Beginner, sand and reef",
+        "title": "Jacking Horse",
+        "subtitle": "1 to 2 ft all week. Soft rolling waves next to Cloud 9, best at mid to high tide."
+      },
+      {
+        "eyebrow": "Beginner to intermediate",
+        "title": "Quiksilver",
+        "subtitle": "2 to 3 ft, cleanest before 9am. Easy paddle out from the Cloud 9 area."
+      }
+    ],
+    "advanced": [
+      {
+        "eyebrow": "Advanced, shallow reef",
+        "title": "Cloud 9",
+        "subtitle": "3 to 5 ft from Thursday. Fast right-hand barrels, crowded at dawn.",
+        "image": "cloud-9-boardwalk"
+      },
+      {
+        "eyebrow": "Advanced, boat access",
+        "title": "Stimpy's",
+        "subtitle": "4 to 6 ft lefts on the outer reef. Go with a local boatman and a buddy."
+      }
+    ]
+  },
+  "costs": {
+    "title": "Surf costs (sample prices)",
+    "items": [
+      {
+        "label": "Surf lesson, 1.5 hours with coach",
+        "amount": 1500
+      },
+      {
+        "label": "Softboard rental, full day",
+        "amount": 500
+      },
+      {
+        "label": "Boat to the outer reefs, per person",
+        "amount": 1000
+      }
+    ]
+  },
+  "note": {
+    "title": "Respect the reef",
+    "body": "Cloud 9 and Stimpy's break over shallow reef. Wear reef booties, never surf them at low tide, and stay out of the lineup at Cloud 9 if you are still learning.",
+    "author": "From a Siargao surf coach"
+  }
+}

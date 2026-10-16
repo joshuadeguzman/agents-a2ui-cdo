@@ -1,0 +1,55 @@
+{
+  "query": {
+    "area": "Cloud 9",
+    "nights": 3,
+    "max_price": 4500
+  },
+  "hero": {
+    "eyebrow": "3 nights, up to PHP 4,500 per night",
+    "title": "4 stays near Cloud 9",
+    "subtitle": "Sample prices per night, cheapest first."
+  },
+  "stays": [
+    {
+      "id": "boardwalk-homestay",
+      "name": "Boardwalk Family Homestay",
+      "area": "Cloud 9",
+      "pricePerNight": 1600,
+      "rating": 4.4,
+      "note": "Family run rooms with breakfast, 6 min walk to the Cloud 9 boardwalk",
+      "image": "stay-boardwalk-homestay"
+    },
+    {
+      "id": "cloud9-surf-cabins",
+      "name": "Cloud 9 Surf Cabins",
+      "area": "Cloud 9",
+      "pricePerNight": 2800,
+      "rating": 4.6,
+      "note": "Thatched cabins with board racks, 3 min walk to the break",
+      "image": "stay-cloud9-surf-cabins"
+    },
+    {
+      "id": "catangnan-garden-bungalows",
+      "name": "Catangnan Garden Bungalows",
+      "area": "Cloud 9",
+      "pricePerNight": 3400,
+      "rating": 4.5,
+      "note": "Quiet garden bungalows on the Cloud 9 road, aircon and fast wifi",
+      "image": "stay-catangnan-bungalows"
+    },
+    {
+      "id": "tuason-point-pool-suites",
+      "name": "Tuason Point Pool Suites",
+      "area": "Cloud 9",
+      "pricePerNight": 4200,
+      "rating": 4.7,
+      "note": "Small pool, ocean view rooms, 8 min walk to Cloud 9",
+      "image": "stay-palm-villa"
+    }
+  ],
+  "note": {
+    "title": "Book the boardwalk side",
+    "body": "Stays on the Cloud 9 road are a short walk to the break and to food. Further inland is cheaper but you will want a scooter.",
+    "author": "From a Siargao local"
+  }
+}

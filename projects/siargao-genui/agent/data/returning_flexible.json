@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "eyebrow": "Welcome back",
+    "title": "Siargao, the quieter side",
+    "subtitle": "Pick when you can go and your budget. Here are spots most first-timers skip."
+  },
+  "when": {
+    "label": "Which months work?",
+    "options": [
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October"
+    ]
+  },
+  "length": {
+    "label": "How long?",
+    "options": [
+      "4 nights",
+      "1 week",
+      "2 weeks"
+    ]
+  },
+  "budgetLabel": "Max stay price per night",
+  "prefs": {
+    "months": [
+      "April",
+      "May"
+    ],
+    "length": [
+      "1 week"
+    ],
+    "maxPerNight": 3500
+  },
+  "spotsHeading": {
+    "title": "Lesser-known spots",
+    "subtitle": "Worth the extra scooter ride."
+  },
+  "spots": [
+    {
+      "eyebrow": "North east coast",
+      "title": "Pacifico",
+      "subtitle": "Long quiet beach and uncrowded waves. Stay two nights instead of a day trip.",
+      "image": "pacifico-beach"
+    },
+    {
+      "eyebrow": "Pilar, low tide only",
+      "title": "Magpupungko rock pools",
+      "subtitle": "Go on a weekday morning at low tide. Check the tide table the night before.",
+      "image": "magpupungko-pools"
+    },
+    {
+      "eyebrow": "Del Carmen",
+      "title": "Sugba Lagoon by paddle board",
+      "subtitle": "Skip the jump platform crowd and paddle into the mangroves early.",
+      "image": "sugba-lagoon"
+    }
+  ],
+  "note": {
+    "title": "Pick your season",
+    "body": "September to November brings the biggest swell and the surf cup crowds at Cloud 9. For calm water, easy island hopping and cheaper rooms, March to June is the sweet spot.",
+    "author": "From a Siargao local"
+  }
+}

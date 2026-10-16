@@ -1,0 +1,163 @@
+{
+  "trip": {
+    "eyebrow": "4 days, mid budget",
+    "title": "Your first Siargao trip",
+    "subtitle": "Surf, islands and lagoons, based in General Luna near Cloud 9.",
+    "image": "cloud-9-boardwalk"
+  },
+  "daysHeading": "Day by day",
+  "days": [
+    {
+      "day": 1,
+      "title": "Land and settle in General Luna",
+      "image": "siargao-flight",
+      "items": [
+        {
+          "time": "10:30",
+          "activity": "Land at Sayak Airport (IAO), Del Carmen",
+          "note": "Direct flights from Manila, Cebu and Clark"
+        },
+        {
+          "time": "11:15",
+          "activity": "Shared van to General Luna",
+          "note": "About 1 hour, around PHP 350 per person"
+        },
+        {
+          "time": "14:00",
+          "activity": "Check in near Cloud 9"
+        },
+        {
+          "time": "17:30",
+          "activity": "Sunset on the Cloud 9 boardwalk"
+        },
+        {
+          "time": "19:30",
+          "activity": "Dinner on Tourism Road"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Surf lesson and the Maasin river",
+      "image": "cloud-9-boardwalk",
+      "items": [
+        {
+          "time": "07:00",
+          "activity": "Beginner surf lesson at Jacking Horse",
+          "note": "About PHP 1,500 for 1.5 hours with board and coach"
+        },
+        {
+          "time": "12:00",
+          "activity": "Lunch and a nap, it gets hot"
+        },
+        {
+          "time": "14:30",
+          "activity": "Scooter to the Maasin river rope swing",
+          "note": "Scooter rental about PHP 500 per day"
+        },
+        {
+          "time": "19:00",
+          "activity": "Dinner and live music in General Luna"
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "title": "Island hopping: Naked, Daku, Guyam",
+      "image": "guyam-island",
+      "items": [
+        {
+          "time": "08:00",
+          "activity": "Boat from the General Luna port",
+          "note": "Shared tour about PHP 1,500 per person with lunch"
+        },
+        {
+          "time": "08:30",
+          "activity": "Naked Island sandbar"
+        },
+        {
+          "time": "11:00",
+          "activity": "Daku Island, grilled seafood lunch"
+        },
+        {
+          "time": "14:00",
+          "activity": "Swim and snorkel at Guyam Island"
+        },
+        {
+          "time": "16:00",
+          "activity": "Back in town, free evening"
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "title": "Sugba Lagoon, then fly home",
+      "image": "sugba-lagoon",
+      "items": [
+        {
+          "time": "06:30",
+          "activity": "Van to Del Carmen",
+          "note": "Leave bags in the van or at the port"
+        },
+        {
+          "time": "07:30",
+          "activity": "Boat to Sugba Lagoon, paddle board and swim",
+          "note": "About PHP 1,200 per person for boat share and fees"
+        },
+        {
+          "time": "12:00",
+          "activity": "Lunch in Del Carmen"
+        },
+        {
+          "time": "13:30",
+          "activity": "Sayak Airport, 10 min away",
+          "note": "Afternoon flight out"
+        }
+      ]
+    }
+  ],
+  "budget": {
+    "title": "Estimated cost per person (sample prices)",
+    "currency": "PHP",
+    "items": [
+      {
+        "label": "Return flight from Manila",
+        "amount": 7500
+      },
+      {
+        "label": "Stay, 3 nights (half of a PHP 5,000 room)",
+        "amount": 7500
+      },
+      {
+        "label": "Airport vans, both ways",
+        "amount": 700
+      },
+      {
+        "label": "Surf lesson",
+        "amount": 1500
+      },
+      {
+        "label": "Island hopping tour",
+        "amount": 1500
+      },
+      {
+        "label": "Sugba Lagoon boat share and fees",
+        "amount": 1200
+      },
+      {
+        "label": "Scooter rental, 2 days",
+        "amount": 1000
+      },
+      {
+        "label": "Food and drinks, 4 days",
+        "amount": 4000
+      }
+    ],
+    "totalLabel": "Estimated total"
+  },
+  "note": {
+    "title": "Bring cash and go early",
+    "body": "ATMs in General Luna often run dry on weekends and many small places take cash only. Walk the Cloud 9 boardwalk at sunrise, before the crowds and the heat.",
+    "author": "From a Siargao local"
+  }
+}
