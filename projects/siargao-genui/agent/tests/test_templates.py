@@ -15,7 +15,14 @@ from siargao_agent.validation import validate_messages
 
 
 def test_every_fixture_intent_has_a_template(store):
-    assert sorted(store.intents) == sorted(FIXTURE_INTENTS)
+    # Frozen templates (scripts/freeze.py) may add intents beyond the fixtures.
+    assert set(FIXTURE_INTENTS) <= set(store.intents)
+
+
+def test_every_template_validates(store):
+    for intent in store.intents:
+        rendered = store.render(intent, "")
+        assert validate_messages(rendered.messages, intent) == [], intent
 
 
 @pytest.mark.parametrize("intent", FIXTURE_INTENTS)

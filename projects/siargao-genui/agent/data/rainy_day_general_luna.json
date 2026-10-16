@@ -1,0 +1,70 @@
+{
+  "hero": {
+    "eyebrow": "Rainy Day Guide",
+    "title": "Cozy GL Food & Coffee",
+    "subtitle": "A perfect indoor itinerary for two foodies in General Luna."
+  },
+  "vibes": {
+    "options": [
+      "Cozy Cafe",
+      "Lively Bistro",
+      "Quiet Hideout"
+    ]
+  },
+  "prefs": {
+    "vibe": [
+      "Cozy Cafe"
+    ]
+  },
+  "itinerary": {
+    "title": "Rainy Day Feast for Two",
+    "items": [
+      {
+        "time": "08:30",
+        "activity": "Specialty Coffee & Pastries",
+        "note": "Warm up with fresh croissants and flat whites at Spotted Pig Cafe."
+      },
+      {
+        "time": "12:00",
+        "activity": "Long Comfort Lunch",
+        "note": "Head to Kermit for authentic wood-fired pizza and fresh pasta."
+      },
+      {
+        "time": "15:00",
+        "activity": "Board Games & Matcha",
+        "note": "Relax at Shaka with warm matcha lattes and indoor table games."
+      },
+      {
+        "time": "19:00",
+        "activity": "Cozy Dinner & Cocktails",
+        "note": "Enjoy a candlelit dinner with local-inspired dishes at Wild Restaurant."
+      }
+    ]
+  },
+  "costs": {
+    "title": "Estimated Food Budget for Two (sample prices)",
+    "items": [
+      {
+        "label": "Morning coffee & breakfast",
+        "amount": 900
+      },
+      {
+        "label": "Wood-fired lunch & drinks",
+        "amount": 1500
+      },
+      {
+        "label": "Afternoon matcha & snacks",
+        "amount": 700
+      },
+      {
+        "label": "Dinner & craft cocktails",
+        "amount": 2400
+      }
+    ]
+  },
+  "note": {
+    "title": "Watch out for brownouts",
+    "body": "Heavy rain sometimes brings brief power outages. Cafes with backup generators like Spotted Pig or Shaka are your best bet to stay dry and connected.",
+    "author": "From a Siargao local"
+  }
+}
