@@ -1,0 +1,7 @@
+# Catalog validation and code generation tooling.
+# Create the venv with: python3.12 -m venv catalog/.venv && catalog/.venv/bin/pip install -r catalog/requirements.txt
+a2ui-agent-sdk==0.8.0
+jsonschema==4.26.0
+referencing==0.37.0
+pytest==9.1.1
+ruff==0.17.1
