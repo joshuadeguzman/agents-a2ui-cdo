@@ -1,0 +1,27 @@
+# Tool config for the Siargao agent. Dependencies are pinned in
+# requirements.txt, requirements-dev.txt and constraints.txt.
+
+[project]
+name = "siargao-agent"
+version = "0.1.0"
+description = "Siargao travel planner: ADK agent that returns A2UI v0.9 over A2A"
+requires-python = ">=3.12,<3.13"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::FutureWarning",
+    "ignore::UserWarning",
+]
