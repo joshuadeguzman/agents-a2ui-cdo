@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Agent runtime logs (keep the folder)
+agent/logs/*.jsonl
+
+# Flutter
+app/build/
+app/.dart_tool/
+app/.flutter-plugins-dependencies
+app/.idea/
+app/**/ephemeral/
+
+# OS
+.DS_Store
