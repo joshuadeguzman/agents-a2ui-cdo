@@ -1,0 +1,382 @@
+{
+  "intent": "first_time_trip",
+  "title": "First-time Siargao trip",
+  "prompt": "Plan my first trip to Siargao, 4 days, mid budget",
+  "path": "a2a",
+  "source": "template",
+  "modelCalls": 0,
+  "text": "## Your first Siargao trip (4 days, mid budget)\n\nBase yourself in General Luna near Cloud 9. You get surf, island hopping and Sugba Lagoon without long transfers.\n\n**Day 1: Land and settle in General Luna**\n- 10:30: Land at Sayak Airport (IAO), Del Carmen (Direct flights from Manila, Cebu and Clark)\n- 11:15: Shared van to General Luna (About 1 hour, around PHP 350 per person)\n- 14:00: Check in near Cloud 9\n- 17:30: Sunset on the Cloud 9 boardwalk\n- 19:30: Dinner on Tourism Road\n\n**Day 2: Surf lesson and the Maasin river**\n- 07:00: Beginner surf lesson at Jacking Horse (About PHP 1,500 for 1.5 hours with board and coach)\n- 12:00: Lunch and a nap, it gets hot\n- 14:30: Scooter to the Maasin river rope swing (Scooter rental about PHP 500 per day)\n- 19:00: Dinner and live music in General Luna\n\n**Day 3: Island hopping: Naked, Daku, Guyam**\n- 08:00: Boat from the General Luna port (Shared tour about PHP 1,500 per person with lunch)\n- 08:30: Naked Island sandbar\n- 11:00: Daku Island, grilled seafood lunch\n- 14:00: Swim and snorkel at Guyam Island\n- 16:00: Back in town, free evening\n\n**Day 4: Sugba Lagoon, then fly home**\n- 06:30: Van to Del Carmen (Leave bags in the van or at the port)\n- 07:30: Boat to Sugba Lagoon, paddle board and swim (About PHP 1,200 per person for boat share and fees)\n- 12:00: Lunch in Del Carmen\n- 13:30: Sayak Airport, 10 min away (Afternoon flight out)\n\n**Estimated cost per person (sample prices)**\n- Return flight from Manila: PHP 7,500\n- Stay, 3 nights (half of a PHP 5,000 room): PHP 7,500\n- Airport vans, both ways: PHP 700\n- Surf lesson: PHP 1,500\n- Island hopping tour: PHP 1,500\n- Sugba Lagoon boat share and fees: PHP 1,200\n- Scooter rental, 2 days: PHP 1,000\n- Food and drinks, 4 days: PHP 4,000\n- **Estimated total: PHP 24,900**\n\n**Local tip:** bring cash. ATMs in General Luna often run dry on weekends and many small places take cash only. Walk the Cloud 9 boardwalk at sunrise, before the crowds and the heat.\n\nWant me to book this plan, make it cheaper, or add another surf day?",
+  "messages": [
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "first_time_trip",
+        "catalogId": "https://siargao-genui.example/catalogs/v1/catalog.json"
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "first_time_trip",
+        "components": [
+          {
+            "id": "root",
+            "component": "Stack",
+            "children": [
+              "hero",
+              "days-heading",
+              "days-grid",
+              "budget",
+              "local-note",
+              "next-actions"
+            ],
+            "gap": "large"
+          },
+          {
+            "id": "hero",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/trip/eyebrow"
+            },
+            "title": {
+              "path": "/trip/title"
+            },
+            "subtitle": {
+              "path": "/trip/subtitle"
+            },
+            "image": {
+              "path": "/trip/image"
+            }
+          },
+          {
+            "id": "days-heading",
+            "component": "Heading",
+            "title": {
+              "path": "/daysHeading"
+            }
+          },
+          {
+            "id": "days-grid",
+            "component": "FlexGrid",
+            "children": [
+              "day-1",
+              "day-2",
+              "day-3",
+              "day-4"
+            ],
+            "minItemWidth": 280
+          },
+          {
+            "id": "day-1",
+            "component": "ItineraryDay",
+            "day": {
+              "path": "/days/0/day"
+            },
+            "title": {
+              "path": "/days/0/title"
+            },
+            "items": {
+              "path": "/days/0/items"
+            },
+            "image": {
+              "path": "/days/0/image"
+            }
+          },
+          {
+            "id": "day-2",
+            "component": "ItineraryDay",
+            "day": {
+              "path": "/days/1/day"
+            },
+            "title": {
+              "path": "/days/1/title"
+            },
+            "items": {
+              "path": "/days/1/items"
+            },
+            "image": {
+              "path": "/days/1/image"
+            }
+          },
+          {
+            "id": "day-3",
+            "component": "ItineraryDay",
+            "day": {
+              "path": "/days/2/day"
+            },
+            "title": {
+              "path": "/days/2/title"
+            },
+            "items": {
+              "path": "/days/2/items"
+            },
+            "image": {
+              "path": "/days/2/image"
+            }
+          },
+          {
+            "id": "day-4",
+            "component": "ItineraryDay",
+            "day": {
+              "path": "/days/3/day"
+            },
+            "title": {
+              "path": "/days/3/title"
+            },
+            "items": {
+              "path": "/days/3/items"
+            },
+            "image": {
+              "path": "/days/3/image"
+            }
+          },
+          {
+            "id": "budget",
+            "component": "CostBreakdown",
+            "title": {
+              "path": "/budget/title"
+            },
+            "currency": {
+              "path": "/budget/currency"
+            },
+            "items": {
+              "path": "/budget/items"
+            },
+            "totalLabel": {
+              "path": "/budget/totalLabel"
+            }
+          },
+          {
+            "id": "local-note",
+            "component": "LocalNote",
+            "title": {
+              "path": "/note/title"
+            },
+            "body": {
+              "path": "/note/body"
+            },
+            "tone": "local",
+            "author": {
+              "path": "/note/author"
+            }
+          },
+          {
+            "id": "next-actions",
+            "component": "Actions",
+            "buttons": [
+              {
+                "label": "Book this plan",
+                "style": "primary",
+                "action": {
+                  "event": {
+                    "name": "book_plan",
+                    "context": {
+                      "intent": "first_time_trip",
+                      "days": 4
+                    }
+                  }
+                }
+              },
+              {
+                "label": "Make it cheaper",
+                "style": "secondary",
+                "action": {
+                  "event": {
+                    "name": "refine_plan",
+                    "context": {
+                      "intent": "first_time_trip",
+                      "change": "cheaper"
+                    }
+                  }
+                }
+              },
+              {
+                "label": "Add a surf day",
+                "style": "text",
+                "action": {
+                  "event": {
+                    "name": "refine_plan",
+                    "context": {
+                      "intent": "first_time_trip",
+                      "change": "more_surf"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateDataModel": {
+        "surfaceId": "first_time_trip",
+        "path": "/",
+        "value": {
+          "trip": {
+            "eyebrow": "4 days, mid budget",
+            "title": "Your first Siargao trip",
+            "subtitle": "Surf, islands and lagoons, based in General Luna near Cloud 9.",
+            "image": "cloud-9-boardwalk"
+          },
+          "daysHeading": "Day by day",
+          "days": [
+            {
+              "day": 1,
+              "title": "Land and settle in General Luna",
+              "image": "siargao-flight",
+              "items": [
+                {
+                  "time": "10:30",
+                  "activity": "Land at Sayak Airport (IAO), Del Carmen",
+                  "note": "Direct flights from Manila, Cebu and Clark"
+                },
+                {
+                  "time": "11:15",
+                  "activity": "Shared van to General Luna",
+                  "note": "About 1 hour, around PHP 350 per person"
+                },
+                {
+                  "time": "14:00",
+                  "activity": "Check in near Cloud 9"
+                },
+                {
+                  "time": "17:30",
+                  "activity": "Sunset on the Cloud 9 boardwalk"
+                },
+                {
+                  "time": "19:30",
+                  "activity": "Dinner on Tourism Road"
+                }
+              ]
+            },
+            {
+              "day": 2,
+              "title": "Surf lesson and the Maasin river",
+              "image": "cloud-9-boardwalk",
+              "items": [
+                {
+                  "time": "07:00",
+                  "activity": "Beginner surf lesson at Jacking Horse",
+                  "note": "About PHP 1,500 for 1.5 hours with board and coach"
+                },
+                {
+                  "time": "12:00",
+                  "activity": "Lunch and a nap, it gets hot"
+                },
+                {
+                  "time": "14:30",
+                  "activity": "Scooter to the Maasin river rope swing",
+                  "note": "Scooter rental about PHP 500 per day"
+                },
+                {
+                  "time": "19:00",
+                  "activity": "Dinner and live music in General Luna"
+                }
+              ]
+            },
+            {
+              "day": 3,
+              "title": "Island hopping: Naked, Daku, Guyam",
+              "image": "guyam-island",
+              "items": [
+                {
+                  "time": "08:00",
+                  "activity": "Boat from the General Luna port",
+                  "note": "Shared tour about PHP 1,500 per person with lunch"
+                },
+                {
+                  "time": "08:30",
+                  "activity": "Naked Island sandbar"
+                },
+                {
+                  "time": "11:00",
+                  "activity": "Daku Island, grilled seafood lunch"
+                },
+                {
+                  "time": "14:00",
+                  "activity": "Swim and snorkel at Guyam Island"
+                },
+                {
+                  "time": "16:00",
+                  "activity": "Back in town, free evening"
+                }
+              ]
+            },
+            {
+              "day": 4,
+              "title": "Sugba Lagoon, then fly home",
+              "image": "sugba-lagoon",
+              "items": [
+                {
+                  "time": "06:30",
+                  "activity": "Van to Del Carmen",
+                  "note": "Leave bags in the van or at the port"
+                },
+                {
+                  "time": "07:30",
+                  "activity": "Boat to Sugba Lagoon, paddle board and swim",
+                  "note": "About PHP 1,200 per person for boat share and fees"
+                },
+                {
+                  "time": "12:00",
+                  "activity": "Lunch in Del Carmen"
+                },
+                {
+                  "time": "13:30",
+                  "activity": "Sayak Airport, 10 min away",
+                  "note": "Afternoon flight out"
+                }
+              ]
+            }
+          ],
+          "budget": {
+            "title": "Estimated cost per person (sample prices)",
+            "currency": "PHP",
+            "items": [
+              {
+                "label": "Return flight from Manila",
+                "amount": 7500
+              },
+              {
+                "label": "Stay, 3 nights (half of a PHP 5,000 room)",
+                "amount": 7500
+              },
+              {
+                "label": "Airport vans, both ways",
+                "amount": 700
+              },
+              {
+                "label": "Surf lesson",
+                "amount": 1500
+              },
+              {
+                "label": "Island hopping tour",
+                "amount": 1500
+              },
+              {
+                "label": "Sugba Lagoon boat share and fees",
+                "amount": 1200
+              },
+              {
+                "label": "Scooter rental, 2 days",
+                "amount": 1000
+              },
+              {
+                "label": "Food and drinks, 4 days",
+                "amount": 4000
+              }
+            ],
+            "totalLabel": "Estimated total"
+          },
+          "note": {
+            "title": "Bring cash and go early",
+            "body": "ATMs in General Luna often run dry on weekends and many small places take cash only. Walk the Cloud 9 boardwalk at sunrise, before the crowds and the heat.",
+            "author": "From a Siargao local"
+          }
+        }
+      }
+    }
+  ]
+}
