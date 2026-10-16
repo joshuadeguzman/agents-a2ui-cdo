@@ -1,0 +1,106 @@
+{
+  "description": "Template for the search_stays tool surface, derived from fixtures/stays_near_cloud9.json. The components are fixed. siargao_mcp/stays.py adds one StayCard per result (from stayCard, with {i} replaced by the 0-based index and {n} by the 1-based index) and fills the data model. With no results it swaps stays-grid for emptyState.",
+  "surfaceId": "stays_near_cloud9",
+  "catalogId": "https://siargao-genui.example/catalogs/v1/catalog.json",
+  "components": [
+    {
+      "id": "root",
+      "component": "Stack",
+      "children": ["hero", "price-slider", "stays-grid", "local-note"],
+      "gap": "medium"
+    },
+    {
+      "id": "hero",
+      "component": "Heading",
+      "eyebrow": {"path": "/hero/eyebrow"},
+      "title": {"path": "/hero/title"},
+      "subtitle": {"path": "/hero/subtitle"}
+    },
+    {
+      "id": "price-slider",
+      "component": "BudgetSlider",
+      "label": "Max price per night",
+      "min": 500,
+      "max": 10000,
+      "step": 500,
+      "value": {"path": "/query/max_price"},
+      "currency": "PHP"
+    },
+    {
+      "id": "stays-grid",
+      "component": "FlexGrid",
+      "children": [],
+      "minItemWidth": 260
+    },
+    {
+      "id": "local-note",
+      "component": "LocalNote",
+      "title": {"path": "/note/title"},
+      "body": {"path": "/note/body"},
+      "tone": "local",
+      "author": {"path": "/note/author"}
+    }
+  ],
+  "stayCard": {
+    "id": "stay-{n}",
+    "component": "StayCard",
+    "image": {"path": "/stays/{i}/image"},
+    "name": {"path": "/stays/{i}/name"},
+    "note": {"path": "/stays/{i}/note"},
+    "pricePerNight": {"path": "/stays/{i}/pricePerNight"},
+    "currency": "PHP",
+    "area": {"path": "/stays/{i}/area"},
+    "rating": {"path": "/stays/{i}/rating"},
+    "action": {"event": {"name": "choose_stay", "context": {"stayId": "{stayId}", "nights": "{nights}"}}},
+    "actionLabel": "Choose"
+  },
+  "emptyState": {
+    "id": "no-results",
+    "component": "LocalNote",
+    "title": {"path": "/empty/title"},
+    "body": {"path": "/empty/body"},
+    "tone": "heads_up"
+  },
+  "copy": {
+    "eyebrow": "{nights_label}, up to PHP {max_price} per night",
+    "title": "{count_label} near {area}",
+    "subtitle": "Sample prices per night, cheapest first.",
+    "emptyTitle": "No stays near {area}",
+    "emptySubtitle": "Nothing matched this budget. Try a higher max price.",
+    "emptyNoteTitle": "Nothing under PHP {max_price} per night",
+    "emptyNoteBodyCheaper": "The cheapest sample stay near {area} is PHP {cheapest} per night. Raise the max price with the slider and search again.",
+    "emptyNoteBodyUnknownArea": "There are no sample stays for {area}. Try one of these areas: {areas}."
+  },
+  "notes": {
+    "cloud 9": {
+      "title": "Book the boardwalk side",
+      "body": "Stays on the Cloud 9 road are a short walk to the break and to food. Further inland is cheaper but you will want a scooter.",
+      "author": "From a Siargao local"
+    },
+    "general luna": {
+      "title": "Stay near Tourism Road",
+      "body": "General Luna is the town center, with cafes, the night market and boats to the islands. Cloud 9 is a short tricycle ride away.",
+      "author": "From a Siargao local"
+    },
+    "pacifico": {
+      "title": "Plan the ride north",
+      "body": "Pacifico is a long ride from General Luna by van or scooter. Bring cash, there are few ATMs up north.",
+      "author": "From a Siargao local"
+    },
+    "pilar": {
+      "title": "Time it with the tide",
+      "body": "The Magpupungko rock pools only show at low tide. Check the tide table before you head over.",
+      "author": "From a Siargao local"
+    },
+    "burgos": {
+      "title": "Stock up before you go",
+      "body": "Burgos is quiet and far from town. Bring cash and snacks, and plan your ride back before dark.",
+      "author": "From a Siargao local"
+    },
+    "default": {
+      "title": "Rent a scooter",
+      "body": "Most stays are spread along the coast road. A scooter is the easiest way to get between town, the breaks and the beaches.",
+      "author": "From a Siargao local"
+    }
+  }
+}
