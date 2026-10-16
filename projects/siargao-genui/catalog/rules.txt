@@ -1,0 +1,18 @@
+**RULES FOR THE SIARGAO CATALOG**
+
+- Send three messages per surface, in order: createSurface (with this catalog's catalogId), updateComponents, then updateDataModel with path "/" and the full data model as value.
+- The surfaceId is the intent name, for example "first_time_trip".
+- Exactly one component has the id "root", and it MUST be a Stack. Every other component must be reachable from root through children.
+- Component ids are short kebab-case strings and are unique within a surface. Every id listed in children must exist.
+- Keep a surface under about 25 components. Prefer fewer, richer components (one ItineraryDay per day, one CostBreakdown for all costs).
+- You MUST include ALL required properties for every component, even when the value comes from the data model. If dynamic, use {"path": "/..."}.
+- Put content in the data model and bind to it with {"path": "/..."} (JSON Pointer from the data model root). Every path you use must exist in the updateDataModel value.
+- Two-way inputs: BudgetSlider.value and ChipRow.selected MUST be bindings to a path, and that path must hold an initial value (a number, or an array of strings that may be empty).
+- Images: use only keys listed in catalog/images.json, for example "cloud-9-boardwalk". Never put a URL in an image property.
+- Prices are plain numbers in PHP (no symbols, no commas, no ranges), for example 4500. Say "sample prices" in a title or note, because prices change.
+- CostBreakdown computes the total itself. Do not add a total line to items.
+- Buttons (StayCard.action and Actions buttons) use events: {"event": {"name": "snake_case_name", "context": {...}}}. Put the id of the chosen thing in context as a literal value.
+- Use at most one primary button per Actions row, and at most two LocalNote components per surface.
+- There are no client functions in this catalog. Do not use {"call": ...}.
+- Put several ItineraryDay or StayCard components inside a FlexGrid, not directly in the root Stack.
+- Write in plain, friendly English. Do not use em dashes.

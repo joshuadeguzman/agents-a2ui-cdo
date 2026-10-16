@@ -1,0 +1,281 @@
+{
+  "intent": "stays_near_cloud9",
+  "title": "Stays near Cloud 9",
+  "prompt": "search_stays(area=\"Cloud 9\", nights=3, max_price=4500)",
+  "path": "mcp_tool",
+  "source": "template",
+  "modelCalls": 0,
+  "text": "## 4 stays near Cloud 9\n\n3 nights, up to PHP 4,500 per night. Sample prices, cheapest first.\n\n- **Boardwalk Family Homestay** (Cloud 9, rated 4.4): PHP 1,600 per night, PHP 4,800 for 3 nights. Family run rooms with breakfast, 6 min walk to the Cloud 9 boardwalk.\n- **Cloud 9 Surf Cabins** (Cloud 9, rated 4.6): PHP 2,800 per night, PHP 8,400 for 3 nights. Thatched cabins with board racks, 3 min walk to the break.\n- **Catangnan Garden Bungalows** (Cloud 9, rated 4.5): PHP 3,400 per night, PHP 10,200 for 3 nights. Quiet garden bungalows on the Cloud 9 road, aircon and fast wifi.\n- **Tuason Point Pool Suites** (Cloud 9, rated 4.7): PHP 4,200 per night, PHP 12,600 for 3 nights. Small pool, ocean view rooms, 8 min walk to Cloud 9.\n\n**Local tip:** stays on the Cloud 9 road are a short walk to the break and to food. Further inland is cheaper but you will want a scooter.",
+  "messages": [
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "stays_near_cloud9",
+        "catalogId": "https://siargao-genui.example/catalogs/v1/catalog.json"
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "stays_near_cloud9",
+        "components": [
+          {
+            "id": "root",
+            "component": "Stack",
+            "children": [
+              "hero",
+              "price-slider",
+              "stays-grid",
+              "local-note"
+            ],
+            "gap": "medium"
+          },
+          {
+            "id": "hero",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/hero/eyebrow"
+            },
+            "title": {
+              "path": "/hero/title"
+            },
+            "subtitle": {
+              "path": "/hero/subtitle"
+            }
+          },
+          {
+            "id": "price-slider",
+            "component": "BudgetSlider",
+            "label": "Max price per night",
+            "min": 500,
+            "max": 10000,
+            "step": 500,
+            "value": {
+              "path": "/query/max_price"
+            },
+            "currency": "PHP"
+          },
+          {
+            "id": "stays-grid",
+            "component": "FlexGrid",
+            "children": [
+              "stay-1",
+              "stay-2",
+              "stay-3",
+              "stay-4"
+            ],
+            "minItemWidth": 260
+          },
+          {
+            "id": "stay-1",
+            "component": "StayCard",
+            "image": {
+              "path": "/stays/0/image"
+            },
+            "name": {
+              "path": "/stays/0/name"
+            },
+            "note": {
+              "path": "/stays/0/note"
+            },
+            "pricePerNight": {
+              "path": "/stays/0/pricePerNight"
+            },
+            "currency": "PHP",
+            "area": {
+              "path": "/stays/0/area"
+            },
+            "rating": {
+              "path": "/stays/0/rating"
+            },
+            "action": {
+              "event": {
+                "name": "choose_stay",
+                "context": {
+                  "stayId": "boardwalk-homestay",
+                  "nights": 3
+                }
+              }
+            },
+            "actionLabel": "Choose"
+          },
+          {
+            "id": "stay-2",
+            "component": "StayCard",
+            "image": {
+              "path": "/stays/1/image"
+            },
+            "name": {
+              "path": "/stays/1/name"
+            },
+            "note": {
+              "path": "/stays/1/note"
+            },
+            "pricePerNight": {
+              "path": "/stays/1/pricePerNight"
+            },
+            "currency": "PHP",
+            "area": {
+              "path": "/stays/1/area"
+            },
+            "rating": {
+              "path": "/stays/1/rating"
+            },
+            "action": {
+              "event": {
+                "name": "choose_stay",
+                "context": {
+                  "stayId": "cloud9-surf-cabins",
+                  "nights": 3
+                }
+              }
+            },
+            "actionLabel": "Choose"
+          },
+          {
+            "id": "stay-3",
+            "component": "StayCard",
+            "image": {
+              "path": "/stays/2/image"
+            },
+            "name": {
+              "path": "/stays/2/name"
+            },
+            "note": {
+              "path": "/stays/2/note"
+            },
+            "pricePerNight": {
+              "path": "/stays/2/pricePerNight"
+            },
+            "currency": "PHP",
+            "area": {
+              "path": "/stays/2/area"
+            },
+            "rating": {
+              "path": "/stays/2/rating"
+            },
+            "action": {
+              "event": {
+                "name": "choose_stay",
+                "context": {
+                  "stayId": "catangnan-garden-bungalows",
+                  "nights": 3
+                }
+              }
+            },
+            "actionLabel": "Choose"
+          },
+          {
+            "id": "stay-4",
+            "component": "StayCard",
+            "image": {
+              "path": "/stays/3/image"
+            },
+            "name": {
+              "path": "/stays/3/name"
+            },
+            "note": {
+              "path": "/stays/3/note"
+            },
+            "pricePerNight": {
+              "path": "/stays/3/pricePerNight"
+            },
+            "currency": "PHP",
+            "area": {
+              "path": "/stays/3/area"
+            },
+            "rating": {
+              "path": "/stays/3/rating"
+            },
+            "action": {
+              "event": {
+                "name": "choose_stay",
+                "context": {
+                  "stayId": "tuason-point-pool-suites",
+                  "nights": 3
+                }
+              }
+            },
+            "actionLabel": "Choose"
+          },
+          {
+            "id": "local-note",
+            "component": "LocalNote",
+            "title": {
+              "path": "/note/title"
+            },
+            "body": {
+              "path": "/note/body"
+            },
+            "tone": "local",
+            "author": {
+              "path": "/note/author"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateDataModel": {
+        "surfaceId": "stays_near_cloud9",
+        "path": "/",
+        "value": {
+          "query": {
+            "area": "Cloud 9",
+            "nights": 3,
+            "max_price": 4500
+          },
+          "hero": {
+            "eyebrow": "3 nights, up to PHP 4,500 per night",
+            "title": "4 stays near Cloud 9",
+            "subtitle": "Sample prices per night, cheapest first."
+          },
+          "stays": [
+            {
+              "id": "boardwalk-homestay",
+              "name": "Boardwalk Family Homestay",
+              "area": "Cloud 9",
+              "pricePerNight": 1600,
+              "rating": 4.4,
+              "note": "Family run rooms with breakfast, 6 min walk to the Cloud 9 boardwalk",
+              "image": "stay-boardwalk-homestay"
+            },
+            {
+              "id": "cloud9-surf-cabins",
+              "name": "Cloud 9 Surf Cabins",
+              "area": "Cloud 9",
+              "pricePerNight": 2800,
+              "rating": 4.6,
+              "note": "Thatched cabins with board racks, 3 min walk to the break",
+              "image": "stay-cloud9-surf-cabins"
+            },
+            {
+              "id": "catangnan-garden-bungalows",
+              "name": "Catangnan Garden Bungalows",
+              "area": "Cloud 9",
+              "pricePerNight": 3400,
+              "rating": 4.5,
+              "note": "Quiet garden bungalows on the Cloud 9 road, aircon and fast wifi",
+              "image": "stay-catangnan-bungalows"
+            },
+            {
+              "id": "tuason-point-pool-suites",
+              "name": "Tuason Point Pool Suites",
+              "area": "Cloud 9",
+              "pricePerNight": 4200,
+              "rating": 4.7,
+              "note": "Small pool, ocean view rooms, 8 min walk to Cloud 9",
+              "image": "stay-palm-villa"
+            }
+          ],
+          "note": {
+            "title": "Book the boardwalk side",
+            "body": "Stays on the Cloud 9 road are a short walk to the break and to food. Further inland is cheaper but you will want a scooter.",
+            "author": "From a Siargao local"
+          }
+        }
+      }
+    }
+  ]
+}

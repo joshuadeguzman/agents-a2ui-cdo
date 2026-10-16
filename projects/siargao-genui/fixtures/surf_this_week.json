@@ -1,0 +1,291 @@
+{
+  "intent": "surf_this_week",
+  "title": "Surf this week",
+  "prompt": "How's the surf in Siargao this week?",
+  "path": "a2a",
+  "source": "template",
+  "modelCalls": 0,
+  "text": "## Siargao surf this week (sample data)\n\nSmall and friendly early in the week, a bigger swell from Thursday. Light offshore winds before 9am.\n\n**Best for beginners**\n- **Jacking Horse** (Beginner, sand and reef): 1 to 2 ft all week. Soft rolling waves next to Cloud 9, best at mid to high tide.\n- **Quiksilver** (Beginner to intermediate): 2 to 3 ft, cleanest before 9am. Easy paddle out from the Cloud 9 area.\n\n**For experienced surfers**\n- **Cloud 9** (Advanced, shallow reef): 3 to 5 ft from Thursday. Fast right-hand barrels, crowded at dawn.\n- **Stimpy's** (Advanced, boat access): 4 to 6 ft lefts on the outer reef. Go with a local boatman and a buddy.\n\n**Surf costs (sample prices)**\n- Surf lesson, 1.5 hours with coach: PHP 1,500\n- Softboard rental, full day: PHP 500\n- Boat to the outer reefs, per person: PHP 1,000\n\n**Safety:** Cloud 9 and Stimpy's break over shallow reef. Wear reef booties, never surf them at low tide, and stay out of the lineup at Cloud 9 if you are still learning.",
+  "messages": [
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "surf_this_week",
+        "catalogId": "https://siargao-genui.example/catalogs/v1/catalog.json"
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "surf_this_week",
+        "components": [
+          {
+            "id": "root",
+            "component": "Stack",
+            "children": [
+              "hero",
+              "level-chips",
+              "beginner-heading",
+              "beginner-grid",
+              "advanced-heading",
+              "advanced-grid",
+              "surf-costs",
+              "safety-note",
+              "next-actions"
+            ],
+            "gap": "medium"
+          },
+          {
+            "id": "hero",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/hero/eyebrow"
+            },
+            "title": {
+              "path": "/hero/title"
+            },
+            "subtitle": {
+              "path": "/hero/subtitle"
+            },
+            "image": {
+              "path": "/hero/image"
+            }
+          },
+          {
+            "id": "level-chips",
+            "component": "ChipRow",
+            "label": {
+              "path": "/levels/label"
+            },
+            "options": {
+              "path": "/levels/options"
+            },
+            "selected": {
+              "path": "/prefs/level"
+            },
+            "multiSelect": false
+          },
+          {
+            "id": "beginner-heading",
+            "component": "Heading",
+            "title": "Best for beginners"
+          },
+          {
+            "id": "beginner-grid",
+            "component": "FlexGrid",
+            "children": [
+              "break-jacking-horse",
+              "break-quiksilver"
+            ],
+            "minItemWidth": 260
+          },
+          {
+            "id": "advanced-heading",
+            "component": "Heading",
+            "title": "For experienced surfers"
+          },
+          {
+            "id": "advanced-grid",
+            "component": "FlexGrid",
+            "children": [
+              "break-cloud9",
+              "break-stimpys"
+            ],
+            "minItemWidth": 260
+          },
+          {
+            "id": "break-jacking-horse",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/breaks/beginner/0/eyebrow"
+            },
+            "title": {
+              "path": "/breaks/beginner/0/title"
+            },
+            "subtitle": {
+              "path": "/breaks/beginner/0/subtitle"
+            }
+          },
+          {
+            "id": "break-quiksilver",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/breaks/beginner/1/eyebrow"
+            },
+            "title": {
+              "path": "/breaks/beginner/1/title"
+            },
+            "subtitle": {
+              "path": "/breaks/beginner/1/subtitle"
+            }
+          },
+          {
+            "id": "break-cloud9",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/breaks/advanced/0/eyebrow"
+            },
+            "title": {
+              "path": "/breaks/advanced/0/title"
+            },
+            "subtitle": {
+              "path": "/breaks/advanced/0/subtitle"
+            },
+            "image": {
+              "path": "/breaks/advanced/0/image"
+            }
+          },
+          {
+            "id": "break-stimpys",
+            "component": "Heading",
+            "eyebrow": {
+              "path": "/breaks/advanced/1/eyebrow"
+            },
+            "title": {
+              "path": "/breaks/advanced/1/title"
+            },
+            "subtitle": {
+              "path": "/breaks/advanced/1/subtitle"
+            }
+          },
+          {
+            "id": "surf-costs",
+            "component": "CostBreakdown",
+            "title": {
+              "path": "/costs/title"
+            },
+            "currency": "PHP",
+            "items": {
+              "path": "/costs/items"
+            },
+            "totalLabel": "If you do it all"
+          },
+          {
+            "id": "safety-note",
+            "component": "LocalNote",
+            "title": {
+              "path": "/note/title"
+            },
+            "body": {
+              "path": "/note/body"
+            },
+            "tone": "heads_up",
+            "author": {
+              "path": "/note/author"
+            }
+          },
+          {
+            "id": "next-actions",
+            "component": "Actions",
+            "buttons": [
+              {
+                "label": "Book a lesson",
+                "style": "primary",
+                "action": {
+                  "event": {
+                    "name": "book_surf_lesson",
+                    "context": {
+                      "spot": "Jacking Horse",
+                      "level": {
+                        "path": "/prefs/level"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "label": "Find a board rental",
+                "style": "secondary",
+                "action": {
+                  "event": {
+                    "name": "find_board_rental",
+                    "context": {
+                      "area": "Cloud 9"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateDataModel": {
+        "surfaceId": "surf_this_week",
+        "path": "/",
+        "value": {
+          "hero": {
+            "eyebrow": "Surf report, sample data",
+            "title": "Siargao surf this week",
+            "subtitle": "Small and friendly early in the week, a bigger swell from Thursday. Light offshore winds before 9am.",
+            "image": "cloud-9-boardwalk"
+          },
+          "levels": {
+            "label": "Your level",
+            "options": [
+              "Beginner",
+              "Intermediate",
+              "Advanced"
+            ]
+          },
+          "prefs": {
+            "level": [
+              "Beginner"
+            ]
+          },
+          "breaks": {
+            "beginner": [
+              {
+                "eyebrow": "Beginner, sand and reef",
+                "title": "Jacking Horse",
+                "subtitle": "1 to 2 ft all week. Soft rolling waves next to Cloud 9, best at mid to high tide."
+              },
+              {
+                "eyebrow": "Beginner to intermediate",
+                "title": "Quiksilver",
+                "subtitle": "2 to 3 ft, cleanest before 9am. Easy paddle out from the Cloud 9 area."
+              }
+            ],
+            "advanced": [
+              {
+                "eyebrow": "Advanced, shallow reef",
+                "title": "Cloud 9",
+                "subtitle": "3 to 5 ft from Thursday. Fast right-hand barrels, crowded at dawn.",
+                "image": "cloud-9-boardwalk"
+              },
+              {
+                "eyebrow": "Advanced, boat access",
+                "title": "Stimpy's",
+                "subtitle": "4 to 6 ft lefts on the outer reef. Go with a local boatman and a buddy."
+              }
+            ]
+          },
+          "costs": {
+            "title": "Surf costs (sample prices)",
+            "items": [
+              {
+                "label": "Surf lesson, 1.5 hours with coach",
+                "amount": 1500
+              },
+              {
+                "label": "Softboard rental, full day",
+                "amount": 500
+              },
+              {
+                "label": "Boat to the outer reefs, per person",
+                "amount": 1000
+              }
+            ]
+          },
+          "note": {
+            "title": "Respect the reef",
+            "body": "Cloud 9 and Stimpy's break over shallow reef. Wear reef booties, never surf them at low tide, and stay out of the lineup at Cloud 9 if you are still learning.",
+            "author": "From a Siargao surf coach"
+          }
+        }
+      }
+    }
+  ]
+}
