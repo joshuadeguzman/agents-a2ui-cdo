@@ -1,0 +1,468 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siargao-genui.example/catalogs/v1/catalog.json",
+  "title": "Siargao GenUI Catalog",
+  "description": "Travel planning widgets for a Siargao Island (Philippines) trip planner. A surface is a tree of these components with a Stack as the root. Text and numbers can be literals or data bindings like {\"path\": \"/trip/title\"} that read from the surface data model. Images are referenced by key from catalog/images.json, never by URL. Prices are numbers in PHP unless a currency is given.",
+  "catalogId": "https://siargao-genui.example/catalogs/v1/catalog.json",
+  "components": {
+    "Stack": {
+      "type": "object",
+      "description": "A vertical layout that places its children top to bottom with even spacing. Use a Stack as the root of every surface and to group related components.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Stack"},
+            "children": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ChildList",
+              "description": "The ids of the components to show, in order from top to bottom."
+            },
+            "gap": {
+              "type": "string",
+              "description": "Vertical space between children. Use small for tight lists, medium for most surfaces, large to separate major sections.",
+              "enum": ["small", "medium", "large"],
+              "default": "medium"
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Heading": {
+      "type": "object",
+      "description": "A section or page header: a title with an optional small eyebrow label above it, an optional subtitle below it, and an optional 16:9 hero image shown above everything. Use one Heading with an image at the top of a surface, and plain Headings to introduce later sections.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Heading"},
+            "title": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "The main heading text. Keep it short, under about 50 characters."
+            },
+            "subtitle": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "One supporting sentence shown under the title."
+            },
+            "eyebrow": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "A short uppercase label shown above the title, for example '4 days, mid budget' or 'Surf report'."
+            },
+            "image": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Optional image key from catalog/images.json, for example 'cloud-9-boardwalk'. The app renders it as a 16:9 hero image above the title. Never a URL."
+            }
+          },
+          "required": ["component", "title"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ItineraryDay": {
+      "type": "object",
+      "description": "One day of a trip plan: a day number, a title, and a timeline of activities with times. Put several ItineraryDay components in a FlexGrid to show a multi-day itinerary. Can also list time-based options such as flights or surf sessions.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "ItineraryDay"},
+            "day": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber",
+              "description": "The day number, starting at 1. Shown as a 'Day N' badge."
+            },
+            "title": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "A short theme for the day, for example 'Island hopping: Guyam, Daku, Naked'."
+            },
+            "items": {
+              "description": "The timeline for the day, in time order. Either a literal array or a data binding like {\"path\": \"/days/0/items\"} to an array of the same shape.",
+              "oneOf": [
+                {
+                  "type": "array",
+                  "description": "Timeline entries.",
+                  "items": {
+                    "type": "object",
+                    "description": "One timeline entry.",
+                    "properties": {
+                      "time": {
+                        "type": "string",
+                        "description": "When it happens, as shown to the user, for example '06:00', 'Morning' or 'After lunch'."
+                      },
+                      "activity": {
+                        "type": "string",
+                        "description": "What to do, in a few words, for example 'Surf lesson at Cloud 9'."
+                      },
+                      "note": {
+                        "type": "string",
+                        "description": "Optional practical detail such as a price, a tip or travel time."
+                      }
+                    },
+                    "required": ["time", "activity"],
+                    "additionalProperties": false
+                  }
+                },
+                {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DataBinding"}
+              ]
+            },
+            "image": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Optional image key from catalog/images.json shown as a small banner for the day. Never a URL."
+            }
+          },
+          "required": ["component", "day", "title", "items"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "CostBreakdown": {
+      "type": "object",
+      "description": "A table of cost lines with amounts and a computed total row. Use it for trip budgets, a flight fare split, or any list of prices. Do not add a total line yourself: the app sums the items.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "CostBreakdown"},
+            "title": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Heading for the table, for example 'Estimated budget per person (sample prices)'."
+            },
+            "currency": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "ISO 4217 currency code used to format every amount. Defaults to PHP.",
+              "default": "PHP"
+            },
+            "items": {
+              "description": "The cost lines. Either a literal array or a data binding like {\"path\": \"/budget/items\"} to an array of the same shape.",
+              "oneOf": [
+                {
+                  "type": "array",
+                  "description": "Cost lines in display order.",
+                  "items": {
+                    "type": "object",
+                    "description": "One cost line.",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "What the cost is for, for example 'Stay, 3 nights' or 'Island hopping tour'."
+                      },
+                      "amount": {
+                        "type": "number",
+                        "description": "The amount as a plain number in the table currency, for example 4500. No symbols or commas."
+                      }
+                    },
+                    "required": ["label", "amount"],
+                    "additionalProperties": false
+                  }
+                },
+                {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DataBinding"}
+              ]
+            },
+            "totalLabel": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Label for the computed total row. Defaults to 'Total'.",
+              "default": "Total"
+            }
+          },
+          "required": ["component", "title", "items"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "StayCard": {
+      "type": "object",
+      "description": "A card for one place to stay (or another bookable option such as a flight): image, name, area, a one-line note, price per night, optional rating, and a button. The button sends the action to the agent, usually an event like {\"event\": {\"name\": \"choose_stay\", \"context\": {\"stayId\": \"...\"}}}.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "StayCard"},
+            "image": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Image key from catalog/images.json, for example 'stay-cloud9-surf-cabins'. Never a URL."
+            },
+            "name": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "The name of the stay or option."
+            },
+            "note": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "One short line on why it fits, for example '2 min walk to the Cloud 9 boardwalk'."
+            },
+            "pricePerNight": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber",
+              "description": "Price as a plain number in the card currency. For a stay it is the price per night. No symbols or commas."
+            },
+            "currency": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "ISO 4217 currency code for the price. Defaults to PHP.",
+              "default": "PHP"
+            },
+            "area": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Where it is, for example 'Cloud 9', 'General Luna' or 'Catangnan'."
+            },
+            "rating": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber",
+              "description": "Optional guest rating from 0 to 5, for example 4.6."
+            },
+            "action": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action",
+              "description": "What the button does. Use an event with a name and a context that identifies this option, for example {\"event\": {\"name\": \"choose_stay\", \"context\": {\"stayId\": \"cloud9-surf-cabins\"}}}."
+            },
+            "actionLabel": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Button label. Defaults to 'Choose'.",
+              "default": "Choose"
+            }
+          },
+          "required": ["component", "image", "name", "note", "pricePerNight", "area", "action"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "BudgetSlider": {
+      "type": "object",
+      "description": "A slider that lets the user pick a budget amount. Bind value to a data model path (for example {\"path\": \"/budget/max\"}) so the choice is two-way and travels back with the next request.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "BudgetSlider"},
+            "label": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "What the amount means, for example 'Max price per night' or 'Total trip budget'."
+            },
+            "min": {
+              "type": "number",
+              "description": "Lowest selectable amount."
+            },
+            "max": {
+              "type": "number",
+              "description": "Highest selectable amount. Must be greater than min."
+            },
+            "step": {
+              "type": "number",
+              "description": "Increment between selectable amounts, for example 500. Defaults to 100.",
+              "exclusiveMinimum": 0,
+              "default": 100
+            },
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber",
+              "description": "The current amount. Usually a data binding like {\"path\": \"/budget/max\"} so the slider writes the user's choice back to the data model."
+            },
+            "currency": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "ISO 4217 currency code used to format the amount. Defaults to PHP.",
+              "default": "PHP"
+            }
+          },
+          "required": ["component", "label", "min", "max", "value"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ChipRow": {
+      "type": "object",
+      "description": "A wrapping row of tappable chips for picking one or more options, such as months, trip styles or quick questions. Bind selected to a data model path so the choice is two-way.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "ChipRow"},
+            "label": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Optional short label shown above the chips, for example 'When can you go?'."
+            },
+            "options": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicStringList",
+              "description": "The chip labels. A literal array of short strings, or a data binding to one. Keep each under about 24 characters."
+            },
+            "selected": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicStringList",
+              "description": "The selected chip labels. Use a data binding like {\"path\": \"/filters/months\"} pointing at an array (it may start empty) so taps write back to the data model."
+            },
+            "multiSelect": {
+              "type": "boolean",
+              "description": "If true the user can pick several chips. If false, picking a chip replaces the selection. Defaults to false.",
+              "default": false
+            }
+          },
+          "required": ["component", "options", "selected"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "LocalNote": {
+      "type": "object",
+      "description": "A highlighted callout with local knowledge: a practical tip, a safety heads-up, or an insider recommendation. Use one or two per surface, not more.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "LocalNote"},
+            "title": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "A short headline for the note."
+            },
+            "body": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "One to three sentences of advice. Plain text."
+            },
+            "tone": {
+              "type": "string",
+              "description": "Visual style. tip: helpful advice. heads_up: a warning about safety, weather, cash or timing. local: an insider recommendation from someone who lives there.",
+              "enum": ["tip", "heads_up", "local"],
+              "default": "tip"
+            },
+            "author": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Optional attribution line, for example 'From a Siargao local'."
+            }
+          },
+          "required": ["component", "title", "body", "tone"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "FlexGrid": {
+      "type": "object",
+      "description": "A responsive grid that fits as many columns as the width allows (one column on phones, several on wide screens). Use it for lists of cards such as ItineraryDay, StayCard or Heading tiles.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "FlexGrid"},
+            "children": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ChildList",
+              "description": "The ids of the grid items, in reading order."
+            },
+            "minItemWidth": {
+              "type": "number",
+              "description": "Minimum width of one column in logical pixels. The grid adds columns while each stays at least this wide. Defaults to 280.",
+              "minimum": 120,
+              "default": 280
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Actions": {
+      "type": "object",
+      "description": "A row of buttons for next steps, for example 'Book this plan' and 'Make it cheaper'. Each button sends its action to the agent. Put it at the end of a surface.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Actions"},
+            "buttons": {
+              "description": "The buttons, left to right. Use one primary button at most. Prefer a literal array; a data binding to an array of the same shape is also accepted.",
+              "oneOf": [
+                {
+                  "type": "array",
+                  "description": "Buttons in display order.",
+                  "minItems": 1,
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "description": "One button.",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Button text, two to four words."
+                      },
+                      "style": {
+                        "type": "string",
+                        "description": "primary: the main next step (filled). secondary: an alternative (outlined). text: a low emphasis link style button.",
+                        "enum": ["primary", "secondary", "text"],
+                        "default": "secondary"
+                      },
+                      "action": {
+                        "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action",
+                        "description": "What the button does, usually {\"event\": {\"name\": \"...\", \"context\": {...}}}."
+                      }
+                    },
+                    "required": ["label", "action"],
+                    "additionalProperties": false
+                  }
+                },
+                {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DataBinding"}
+              ]
+            }
+          },
+          "required": ["component", "buttons"]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  },
+  "$defs": {
+    "CatalogComponentCommon": {
+      "type": "object",
+      "description": "Properties every component in this catalog accepts in addition to ComponentCommon (id, accessibility).",
+      "properties": {
+        "weight": {
+          "type": "number",
+          "description": "Relative flex weight inside a parent layout, like CSS flex-grow. Rarely needed: Stack and FlexGrid size their children automatically."
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "description": "Optional theme for a surface. The app ignores unknown keys.",
+      "properties": {
+        "primaryColor": {
+          "type": "string",
+          "description": "The primary brand color for highlights such as primary buttons. Format: hexadecimal, for example '#0E7C86'.",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "agentDisplayName": {
+          "type": "string",
+          "description": "Text shown next to the surface to identify the agent or tool that created it."
+        }
+      },
+      "additionalProperties": true
+    },
+    "anyComponent": {
+      "oneOf": [
+        {"$ref": "#/components/Stack"},
+        {"$ref": "#/components/Heading"},
+        {"$ref": "#/components/ItineraryDay"},
+        {"$ref": "#/components/CostBreakdown"},
+        {"$ref": "#/components/StayCard"},
+        {"$ref": "#/components/BudgetSlider"},
+        {"$ref": "#/components/ChipRow"},
+        {"$ref": "#/components/LocalNote"},
+        {"$ref": "#/components/FlexGrid"},
+        {"$ref": "#/components/Actions"}
+      ],
+      "discriminator": {"propertyName": "component"}
+    },
+    "anyFunction": {
+      "description": "This catalog defines no client functions, so no function call is valid. Use literals or data bindings instead.",
+      "not": {}
+    }
+  }
+}
