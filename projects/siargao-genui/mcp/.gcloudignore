@@ -1,0 +1,11 @@
+# Files gcloud run deploy --source . does not upload. Keeps the local venv
+# (hundreds of MB) out of the Cloud Build upload.
+.gcloudignore
+.git
+.venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+tests/
+.DS_Store
