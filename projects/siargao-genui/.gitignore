@@ -17,3 +17,7 @@ app/**/ephemeral/
 
 # OS
 .DS_Store
+
+# Local demo settings and logs (run.sh, deploy.sh)
+.env.local
+.run/

@@ -7,6 +7,14 @@ export PATH=~/fvm/versions/3.47.5/bin:$PATH
 PY=/Library/Frameworks/Python.framework/Versions/3.12/bin/python3
 ```
 
+## The short version
+
+```sh
+./run.sh --help
+```
+
+`run.sh` covers the common cases (Cloud Run, local servers, offline; simulator or Chrome) and asks for missing settings once. The rest of this file is the manual route.
+
 ## One time setup
 
 ```sh
@@ -94,10 +102,12 @@ Drop photos into `app/assets/img/<key>.jpg` (or `.png`, `.webp`). Keys are liste
 The easy way, from `projects/siargao-genui/`:
 
 ```sh
-./deploy.sh            # asks for project, region, mode, Gemini access (Vertex or API key), web app y/n
-DRY_RUN=1 ./deploy.sh  # same questions, prints what it would run, changes nothing
+./run.sh --redeploy        # deploy (asks only for missing settings), then open the app on the simulator
+./deploy.sh                # deploy only
+./deploy.sh --reconfigure  # ask every question again
+DRY_RUN=1 ./deploy.sh      # prints what it would run, changes nothing
 ```
 
-It shows a summary and only deploys after you type `deploy`. It runs the agent and MCP tests, can grant `roles/aiplatform.user` for Vertex, deploys siargao-agent and siargao-mcp, smoke tests both, and can build and deploy siargao-web. A Gemini API key is read hidden and set as an env var on the agent service, never written to disk.
+It shows a summary and only deploys after you type `deploy`. It runs the agent and MCP tests, can grant `roles/aiplatform.user` for Vertex, deploys siargao-agent and siargao-mcp, smoke tests both, and can build and deploy siargao-web. Answers are saved in `.env.local` (git ignored, chmod 600), including a Gemini API key if you chose one. The key is set as an env var on the agent service.
 
 For the manual route, see the step-by-step commands in `docs/REPORT.md` ("Deploy tomorrow"). Each `deploy.sh` refuses to run unless `CONFIRM_DEPLOY=yes` is set.

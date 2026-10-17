@@ -11,4 +11,15 @@ Demo for the DevFest Manila talk "Powering Generative UI in the Cloud". A Siarga
 | `fixtures/` | Recorded A2UI for every demo intent, used in offline mode |
 | `docs/` | Contract, architecture, runbook, and the build report |
 
+## Try it
+
+```sh
+./run.sh            # app on the iOS Simulator against Cloud Run (deploys first if needed)
+./run.sh --local    # agent and MCP server on this Mac, no cloud
+./run.sh --offline  # app only, recorded fixtures
+./run.sh --help     # all options (--chrome, --redeploy, --setup)
+```
+
+It asks only for settings it has not saved yet (project, agent mode, Gemini API key or Vertex AI) and keeps them in `.env.local`, which git ignores. Nothing is deployed until you type `deploy`.
+
 Start with `docs/RUNBOOK.md`. The shared rules live in `docs/CONTRACT.md`.
