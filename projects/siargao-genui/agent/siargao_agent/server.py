@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import html
 import logging
+import os
+import time
 from collections.abc import Callable
 from typing import Any
 
@@ -16,7 +19,7 @@ from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse
 from starlette.routing import Route
 
 from . import __version__
@@ -65,6 +68,48 @@ def build_agent_card(settings: Settings, store: TemplateStore | None = None) -> 
     )
 
 
+STARTED_AT = time.time()
+
+PAGE_STYLE = """
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;background:#f6f8f8;color:#1a1c1e}
+main{max-width:760px;margin:48px auto;padding:0 24px}
+h1{font-size:40px;margin:0 0 4px}
+.sub{color:#4a5557;font-size:20px;margin:0 0 28px}
+.ok{display:inline-block;background:#d5eef0;color:#00363a;border-radius:99px;padding:6px 14px;
+  font-weight:600;margin-bottom:20px}
+table{border-collapse:collapse;width:100%;background:#fff;border:1px solid #dde3e4;border-radius:16px;overflow:hidden}
+td{padding:12px 16px;border-top:1px solid #dde3e4;font-size:18px;vertical-align:top}
+tr:first-child td{border-top:0}
+td:first-child{color:#4a5557;width:34%}
+code{font-family:ui-monospace,Menlo,monospace;font-size:16px}
+a{color:#00676e}
+.note{color:#4a5557;margin-top:20px;font-size:16px}
+"""
+
+
+def status_page(title: str, subtitle: str, rows: list[tuple[str, str]], note: str) -> HTMLResponse:
+    """A small status page for people who open the service URL in a browser.
+
+    Values are escaped; a value wrapped in <a ...> by the caller is passed
+    through as is.
+    """
+    body = "".join(f"<tr><td>{html.escape(k)}</td><td>{v}</td></tr>" for k, v in rows)
+    return HTMLResponse(
+        "<!doctype html><html lang=en><head><meta charset=utf-8>"
+        "<meta name=viewport content='width=device-width,initial-scale=1'>"
+        f"<title>{html.escape(title)}</title><style>{PAGE_STYLE}</style></head><body><main>"
+        f"<h1>{html.escape(title)}</h1><p class=sub>{html.escape(subtitle)}</p>"
+        f"<span class=ok>Running</span><table>{body}</table><p class=note>{html.escape(note)}</p>"
+        "</main></body></html>"
+    )
+
+
+def _uptime() -> str:
+    seconds = int(time.time() - STARTED_AT)
+    hours, rest = divmod(seconds, 3600)
+    return f"{hours} h {rest // 60} min" if hours else f"{rest // 60} min {rest % 60} s"
+
+
 def default_model_path_factory(settings: Settings, store: TemplateStore) -> Callable[[], Any]:
     def factory() -> Any:
         from .model_path import ModelPath, default_model
@@ -104,10 +149,38 @@ def build_app(
     async def healthz(_request: Request) -> JSONResponse:
         return JSONResponse({"ok": True, "mode": settings.mode, "templates": store.intents})
 
+    async def home(request: Request) -> HTMLResponse:
+        # Browsers send GET. The A2A endpoint at the same path only takes POST.
+        base = str(request.base_url).rstrip("/")
+        e = html.escape
+        model = f"{settings.model} (Gemini)" if settings.live else "none, templates only"
+        rows = [
+            ("Cloud Run service", f"<code>{e(os.environ.get('K_SERVICE', 'local'))}</code>"),
+            ("Revision", f"<code>{e(os.environ.get('K_REVISION', 'local'))}</code>"),
+            ("Instance up for", e(_uptime())),
+            (
+                "Protocol",
+                "A2A 0.3 JSON-RPC (<code>message/send</code>, <code>message/stream</code>) "
+                "with the A2UI v0.9 extension",
+            ),
+            ("Mode", e(settings.mode)),
+            ("Model", e(model)),
+            ("Frozen templates", e(f"{len(store.intents)} ({', '.join(store.intents)})")),
+            ("Agent card", f"<a href='{e(base)}{AGENT_CARD_WELL_KNOWN_PATH}'>{e(AGENT_CARD_WELL_KNOWN_PATH)}</a>"),
+            ("Health", f"<a href='{e(base)}/healthz'>/healthz</a>"),
+        ]
+        return status_page(
+            "Siargao Planner",
+            "A2UI agent, deployed on Google Cloud Run",
+            rows,
+            "This page is for browsers. The app talks to this same URL with POST requests.",
+        )
+
     routes = [
         Route(AGENT_CARD_WELL_KNOWN_PATH, agent_card, methods=["GET"]),
         Route(PREV_AGENT_CARD_WELL_KNOWN_PATH, agent_card, methods=["GET"]),
         Route("/healthz", healthz, methods=["GET"]),
+        Route("/", home, methods=["GET"]),
         *a2a_app.routes(),
     ]
     app = Starlette(

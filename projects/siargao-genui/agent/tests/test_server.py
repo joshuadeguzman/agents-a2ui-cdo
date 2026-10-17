@@ -158,3 +158,18 @@ async def test_request_shape_from_genui_a2a_is_accepted(client):
 async def test_healthz(client):
     body = (await client.get("/healthz")).json()
     assert body["ok"] is True and body["mode"] == "offline"
+
+
+async def test_browser_get_on_root_shows_status_page(client, monkeypatch):
+    monkeypatch.setenv("K_SERVICE", "siargao-agent")
+    monkeypatch.setenv("K_REVISION", "siargao-agent-00002-abc")
+    resp = await client.get("/")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"].startswith("text/html")
+    assert "Siargao Planner" in resp.text
+    assert "siargao-agent-00002-abc" in resp.text
+    assert "/.well-known/agent-card.json" in resp.text
+    # The JSON-RPC endpoint at the same path still takes POST.
+    rpc = await client.post("/", json={"jsonrpc": "2.0", "id": "1", "method": "tasks/get", "params": {"id": "x"}})
+    assert rpc.status_code == 200
+    assert "jsonrpc" in rpc.json()

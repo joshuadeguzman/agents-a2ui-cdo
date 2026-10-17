@@ -7,8 +7,10 @@ so every result can carry `_meta.siargao` at the result level, which
 
 from __future__ import annotations
 
+import html
 import json
 import logging
+import os
 import time
 from functools import cache
 from typing import Annotated, Any
@@ -21,7 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp
 
@@ -224,6 +226,53 @@ async def healthz(request: Request) -> JSONResponse:
     return JSONResponse({"ok": True, "service": "siargao-mcp", "version": __version__, "areas": known_areas()})
 
 
+STARTED_AT = time.time()
+
+PAGE_STYLE = """
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;background:#f6f8f8;color:#1a1c1e}
+main{max-width:760px;margin:48px auto;padding:0 24px}
+h1{font-size:40px;margin:0 0 4px}
+.sub{color:#4a5557;font-size:20px;margin:0 0 28px}
+.ok{display:inline-block;background:#d5eef0;color:#00363a;border-radius:99px;padding:6px 14px;
+  font-weight:600;margin-bottom:20px}
+table{border-collapse:collapse;width:100%;background:#fff;border:1px solid #dde3e4;border-radius:16px;overflow:hidden}
+td{padding:12px 16px;border-top:1px solid #dde3e4;font-size:18px;vertical-align:top}
+tr:first-child td{border-top:0}
+td:first-child{color:#4a5557;width:34%}
+code{font-family:ui-monospace,Menlo,monospace;font-size:16px}
+a{color:#00676e}
+.note{color:#4a5557;margin-top:20px;font-size:16px}
+"""
+
+
+async def home(request: Request) -> HTMLResponse:
+    """A status page for people who open the service URL in a browser."""
+    e = html.escape
+    base = str(request.base_url).rstrip("/")
+    seconds = int(time.time() - STARTED_AT)
+    hours, rest = divmod(seconds, 3600)
+    uptime = f"{hours} h {rest // 60} min" if hours else f"{rest // 60} min {rest % 60} s"
+    rows = [
+        ("Cloud Run service", f"<code>{e(os.environ.get('K_SERVICE', 'local'))}</code>"),
+        ("Revision", f"<code>{e(os.environ.get('K_REVISION', 'local'))}</code>"),
+        ("Instance up for", e(uptime)),
+        ("MCP endpoint", f"<code>{e(base)}{MCP_PATH}</code> (Streamable HTTP, POST JSON-RPC)"),
+        ("Resource", f"<code>{HOME_URI}</code>, <code>{A2UI_MIME_TYPE}</code>"),
+        ("Tool", f"<code>search_stays(area, nights, max_price)</code>, areas: {e(', '.join(known_areas()))}"),
+        ("Health", f"<a href='{e(base)}/healthz'>/healthz</a>"),
+    ]
+    body = "".join(f"<tr><td>{e(k)}</td><td>{v}</td></tr>" for k, v in rows)
+    return HTMLResponse(
+        "<!doctype html><html lang=en><head><meta charset=utf-8>"
+        "<meta name=viewport content='width=device-width,initial-scale=1'>"
+        f"<title>Siargao MCP server</title><style>{PAGE_STYLE}</style></head><body><main>"
+        "<h1>Siargao MCP server</h1><p class=sub>A2UI surfaces over MCP, deployed on Google Cloud Run</p>"
+        f"<span class=ok>Running</span><table>{body}</table>"
+        "<p class=note>This page is for browsers. MCP clients POST to the endpoint above.</p>"
+        "</main></body></html>"
+    )
+
+
 def create_app(server: Server | None = None) -> ASGIApp:
     """The ASGI app: Streamable HTTP at /mcp (stateless, JSON responses), wrapped in permissive CORS."""
     server = server or create_server()
@@ -235,7 +284,10 @@ def create_app(server: Server | None = None) -> ASGIApp:
         # browser origins. This demo server is public and read-only by design.
         transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
         host="0.0.0.0",
-        custom_starlette_routes=[Route("/healthz", healthz, methods=["GET"])],
+        custom_starlette_routes=[
+            Route("/healthz", healthz, methods=["GET"]),
+            Route("/", home, methods=["GET"]),
+        ],
     )
     return CORSMiddleware(
         inner,

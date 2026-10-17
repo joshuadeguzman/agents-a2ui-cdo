@@ -211,3 +211,12 @@ def test_healthz(base_url: str) -> None:
     resp = httpx.get(f"{base_url}/healthz")
     assert resp.status_code == 200
     assert resp.json()["ok"] is True
+
+
+def test_browser_get_on_root_shows_status_page(base_url: str) -> None:
+    resp = httpx.get(base_url + "/", timeout=10)
+    assert resp.status_code == 200
+    assert resp.headers["content-type"].startswith("text/html")
+    assert "Siargao MCP server" in resp.text
+    assert HOME_URI in resp.text
+    assert "search_stays" in resp.text
