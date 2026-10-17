@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -11,7 +12,13 @@ Future<void> main() async {
   runApp(
     SiargaoApp(
       config: AppConfig.fromEnvironment(),
-      link: DeepLink.fromUri(Uri.base),
+      // Web reads the page query. iOS and Android have no page URL, so the
+      // same query can come from --dart-define=DEEP_LINK=tab=home.
+      link: DeepLink.fromUri(
+        kIsWeb
+            ? Uri.base
+            : Uri(query: const String.fromEnvironment('DEEP_LINK')),
+      ),
     ),
   );
 }

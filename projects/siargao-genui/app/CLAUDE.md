@@ -13,7 +13,7 @@ flutter run -d chrome --dart-define=DEMO_MODE=live \
   --dart-define=MCP_URL=http://localhost:10003/mcp
 ```
 
-Deep links (web): `?tab=chat|home|search|gallery`, `&intent=<id>` runs a chat prompt, `&view=text|a2ui|both`.
+Deep links (web): `?tab=chat|home|search|gallery`, `&intent=<id>` runs a chat prompt, `&view=text|a2ui|both`. On iOS and Android pass the same query as `--dart-define=DEEP_LINK=tab=home`.
 
 ## Test
 
