@@ -55,7 +55,7 @@ if [[ "$SIARGAO_MODE" == "live" && "$GEMINI_AUTH" == "vertex" && "${VERTEX_GRANT
 fi
 
 if [[ -z "${DEPLOY_WEB:-}" || -n "$RECONFIGURE" ]]; then
-  if yes_no "Also deploy the Flutter web app to Cloud Run (siargao-web)?" n; then DEPLOY_WEB=yes; else DEPLOY_WEB=no; fi
+  if yes_no "Also deploy the Flutter web app to Cloud Run (siargao-web)?" y; then DEPLOY_WEB=yes; else DEPLOY_WEB=no; fi
 fi
 if [[ "$DEPLOY_WEB" == yes && ! -x "$FLUTTER" ]]; then
   die "Flutter not found. Set FLUTTER=/path/to/flutter."
