@@ -162,6 +162,20 @@ class A2aService {
     WireTrace? trace,
     Map<String, Object?> message,
   ) async {
+    try {
+      final AgentReply reply = await _streamOnce(trace, message);
+      finishTrace(wire, trace, meta: reply.meta);
+      return reply;
+    } on A2aException catch (e) {
+      finishTrace(wire, trace, error: e.message);
+      rethrow;
+    }
+  }
+
+  Future<AgentReply> _streamOnce(
+    WireTrace? trace,
+    Map<String, Object?> message,
+  ) async {
     final String id = newId();
     final Map<String, Object?> body = {
       'jsonrpc': '2.0',

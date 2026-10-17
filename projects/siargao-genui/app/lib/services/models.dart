@@ -162,3 +162,20 @@ bool isA2uiMessage(Map<Object?, Object?> data) =>
     data.containsKey('updateComponents') ||
     data.containsKey('updateDataModel') ||
     data.containsKey('deleteSurface');
+
+/// Records [meta] (or [error]) on an inspector [trace].
+void finishTrace(
+  WireLog? wire,
+  WireTrace? trace, {
+  ResponseMeta? meta,
+  Object? error,
+}) {
+  wire?.finish(
+    trace,
+    source: meta?.source,
+    modelCalls: meta?.modelCalls,
+    serverMs: meta?.latencyMs,
+    intent: meta?.intent,
+    error: error?.toString(),
+  );
+}

@@ -152,6 +152,30 @@ class WireTrace {
   /// replay it.
   VoidCallback? replay;
 
+  /// When the response finished, or null while it is in flight.
+  DateTime? finishedAt;
+
+  /// `template` or `model`, from the response metadata.
+  String? source;
+
+  /// Model calls the server made for this response.
+  int? modelCalls;
+
+  /// Server side time, from the response metadata.
+  int? serverMs;
+
+  /// Routed intent, from the response metadata.
+  String? intent;
+
+  /// Friendly error, if the request failed.
+  String? error;
+
+  /// True until [WireLog.finish] is called.
+  bool get inFlight => finishedAt == null;
+
+  /// Request start to finish, as the app saw it.
+  int? get roundTripMs => finishedAt?.difference(startedAt).inMilliseconds;
+
   /// A2UI entries only.
   Iterable<WireEntry> get a2uiEntries =>
       entries.where((e) => e.kind == WireKind.a2ui);
@@ -258,6 +282,29 @@ class WireLog extends ChangeNotifier {
     _notify();
     return entry;
   }
+
+  /// Marks [trace] done, with what the server said about how it answered.
+  void finish(
+    WireTrace? trace, {
+    String? source,
+    int? modelCalls,
+    int? serverMs,
+    String? intent,
+    String? error,
+  }) {
+    if (trace == null || !trace.inFlight) return;
+    trace
+      ..finishedAt = DateTime.now()
+      ..source = source
+      ..modelCalls = modelCalls
+      ..serverMs = serverMs
+      ..intent = intent
+      ..error = error;
+    _notify();
+  }
+
+  /// True while any request is waiting for its answer.
+  bool get anyInFlight => _traces.any((t) => t.inFlight);
 
   /// Adds one entry per A2UI message and returns them in order.
   List<WireEntry> addA2ui(

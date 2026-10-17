@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../app_scope.dart';
@@ -23,6 +25,7 @@ class _InspectorPanelState extends State<InspectorPanel> {
   final Set<int> _expanded = {};
   WireLog? _wire;
   bool _pinned = true;
+  Timer? _ticker;
 
   @override
   void didChangeDependencies() {
@@ -37,6 +40,7 @@ class _InspectorPanelState extends State<InspectorPanel> {
   @override
   void dispose() {
     _wire?.removeListener(_onLog);
+    _ticker?.cancel();
     _scroll.dispose();
     super.dispose();
   }
@@ -44,6 +48,17 @@ class _InspectorPanelState extends State<InspectorPanel> {
   void _onLog() {
     if (!mounted) return;
     setState(() {});
+    // Tick the "waiting" timers while a request is in flight.
+    if (_wire!.anyInFlight) {
+      _ticker ??= Timer.periodic(const Duration(milliseconds: 100), (_) {
+        if (!mounted) return;
+        if (!_wire!.anyInFlight) {
+          _ticker?.cancel();
+          _ticker = null;
+        }
+        setState(() {});
+      });
+    }
     if (_pinned) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scroll.hasClients) {
@@ -389,6 +404,7 @@ class _TraceCard extends StatelessWidget {
                 ],
               ),
             ),
+            _SourceLine(trace: trace),
             const Divider(height: 1, color: WireColors.line),
             for (final WireEntry e in trace.entries)
               _EntryRow(
@@ -399,6 +415,107 @@ class _TraceCard extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Who answered: a frozen template, Gemini, or still waiting.
+class _SourceLine extends StatelessWidget {
+  const _SourceLine({required this.trace});
+
+  final WireTrace trace;
+
+  static String _time(int ms) =>
+      ms < 1000 ? '$ms ms' : '${(ms / 1000).toStringAsFixed(1)} s';
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme t = Theme.of(context).textTheme;
+    final IconData icon;
+    final Color color;
+    final String label;
+    final String detail;
+    if (trace.inFlight) {
+      final int waited = DateTime.now()
+          .difference(trace.startedAt)
+          .inMilliseconds;
+      icon = Icons.hourglass_top_rounded;
+      color = WireColors.muted;
+      label = trace.channel == WireChannel.a2a
+          ? 'Waiting for the agent'
+          : 'Waiting for the server';
+      detail = _time(waited);
+    } else if (trace.error != null) {
+      icon = Icons.error_outline_rounded;
+      color = WireColors.number;
+      label = 'Failed';
+      detail = trace.error!;
+    } else {
+      final int calls = trace.modelCalls ?? 0;
+      final bool model = trace.source == 'model' || calls > 0;
+      icon = model ? Icons.auto_awesome_rounded : Icons.bolt_rounded;
+      color = model ? WireColors.outgoing : WireColors.accent;
+      label = trace.channel == WireChannel.fixture
+          ? 'Recorded fixture, no network'
+          : model
+          ? 'Gemini'
+          : (trace.source == null ? 'Answered' : 'Frozen template');
+      detail = [
+        if (trace.modelCalls != null)
+          '$calls model ${calls == 1 ? 'call' : 'calls'}',
+        if (trace.serverMs != null) 'server ${_time(trace.serverMs!)}',
+        if (trace.roundTripMs != null && trace.channel != WireChannel.fixture)
+          'round trip ${_time(trace.roundTripMs!)}',
+      ].join(' · ');
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(Gaps.md, 0, Gaps.md, Gaps.sm),
+      child: Row(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.16),
+              borderRadius: BorderRadius.circular(99),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (trace.inFlight)
+                    SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: color,
+                      ),
+                    )
+                  else
+                    Icon(icon, size: 16, color: color),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: t.labelLarge?.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: Gaps.sm),
+          Expanded(
+            child: Text(
+              detail,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: t.bodySmall?.copyWith(color: WireColors.muted),
+            ),
+          ),
+        ],
       ),
     );
   }

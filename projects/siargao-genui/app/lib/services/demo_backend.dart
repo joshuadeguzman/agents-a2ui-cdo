@@ -120,6 +120,7 @@ class OfflineBackend implements DemoBackend {
         json: {'text': r.text},
       );
     }
+    finishTrace(log, trace, meta: r.meta);
     return SurfaceResponse(
       path: r.path,
       messages: r.messages,

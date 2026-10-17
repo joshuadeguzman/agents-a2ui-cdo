@@ -52,6 +52,25 @@ class McpService {
   /// `resources/read` for an A2UI resource such as `a2ui://home/first-run`.
   Future<SurfaceResponse> readResource(String uri) async {
     final WireTrace? trace = wire?.begin(WireChannel.mcpResource, uri);
+    return _finished(trace, () => _readResource(trace, uri));
+  }
+
+  /// Records the outcome of [run] on [trace] for the inspector.
+  Future<SurfaceResponse> _finished(
+    WireTrace? trace,
+    Future<SurfaceResponse> Function() run,
+  ) async {
+    try {
+      final SurfaceResponse r = await run();
+      finishTrace(wire, trace, meta: r.meta);
+      return r;
+    } on McpException catch (e) {
+      finishTrace(wire, trace, error: e.message);
+      rethrow;
+    }
+  }
+
+  Future<SurfaceResponse> _readResource(WireTrace? trace, String uri) async {
     final Map<String, Object?> result = await _call('resources/read', {
       'uri': uri,
     }, trace: trace);
@@ -86,6 +105,14 @@ class McpService {
       WireChannel.mcpTool,
       '$name(${arguments.entries.map((e) => '${e.key}: ${e.value}').join(', ')})',
     );
+    return _finished(trace, () => _callTool(trace, name, arguments));
+  }
+
+  Future<SurfaceResponse> _callTool(
+    WireTrace? trace,
+    String name,
+    Map<String, Object?> arguments,
+  ) async {
     final Map<String, Object?> result = await _call('tools/call', {
       'name': name,
       'arguments': arguments,

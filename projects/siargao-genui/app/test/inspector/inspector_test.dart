@@ -73,6 +73,8 @@ void main() {
       expect(find.text(type), findsOneWidget);
     }
     expect(find.text('3/3 rendered'), findsOneWidget);
+    expect(find.text('Recorded fixture, no network'), findsOneWidget);
+    expect(find.text('0 model calls'), findsOneWidget);
     // The plain text half is logged but hidden by default.
     expect(wire.traces.where((t) => t.textOnly), hasLength(1));
     expect(find.text('text answer'), findsNothing);
@@ -204,10 +206,21 @@ void main() {
             'final': true,
             'status': {
               'state': 'completed',
-              'message': agentMessage([
-                for (final Map<String, Object?> m in messages)
-                  {'kind': 'data', 'data': m},
-              ]),
+              'message': agentMessage(
+                [
+                  for (final Map<String, Object?> m in messages)
+                    {'kind': 'data', 'data': m},
+                ],
+                metadata: {
+                  'siargao': {
+                    'intent': 'dapa_seafood_guide',
+                    'source': 'model',
+                    'modelCalls': 1,
+                    'latencyMs': 12204,
+                    'valid': true,
+                  },
+                },
+              ),
             },
           },
         ]),
@@ -233,5 +246,27 @@ void main() {
       'updateDataModel',
     ]);
     expect(trace.entries.first.direction, WireDirection.outgoing);
+    expect(trace.inFlight, isFalse);
+    expect(trace.source, 'model');
+    expect(trace.modelCalls, 1);
+    expect(trace.serverMs, 12204);
+  });
+
+  test('a failed request is marked on its trace', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final WireLog wire = WireLog();
+    final MockClient down = MockClient(
+      (request) async => throw http.ClientException('refused'),
+    );
+    await expectLater(
+      A2aService(
+        agentUrl: 'http://agent.test',
+        client: down,
+        wire: wire,
+      ).sendPrompt(prompt: 'hi'),
+      throwsA(isA<A2aException>()),
+    );
+    expect(wire.traces.single.inFlight, isFalse);
+    expect(wire.traces.single.error, contains('Could not reach the agent'));
   });
 }
