@@ -13,6 +13,7 @@ when it is installed). Exits 1 on any failure.
 from __future__ import annotations
 
 import json
+import ssl
 import sys
 import urllib.request
 from pathlib import Path
@@ -28,12 +29,25 @@ HEADERS = {"Content-Type": "application/json", "Accept": "application/json, text
 FIXTURE = ROOT.parent / "fixtures" / "stays_near_cloud9.json"
 
 
+def _ssl_context() -> ssl.SSLContext:
+    # The python.org macOS build has no CA store until "Install
+    # Certificates.command" runs, so prefer certifi's bundle when it is there.
+    try:
+        import certifi
+    except ImportError:
+        return ssl.create_default_context()
+    return ssl.create_default_context(cafile=certifi.where())
+
+
+SSL_CONTEXT = _ssl_context()
+
+
 def rpc(url: str, rid: int, method: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
     body: dict[str, Any] = {"jsonrpc": "2.0", "id": rid, "method": method}
     if params is not None:
         body["params"] = params
     req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=HEADERS, method="POST")
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with urllib.request.urlopen(req, timeout=30, context=SSL_CONTEXT) as resp:
         payload = json.loads(resp.read())
     if "error" in payload:
         raise RuntimeError(f"{method}: {payload['error']}")
@@ -116,7 +130,7 @@ def main(base_url: str) -> int:
                 "Access-Control-Request-Headers": "content-type,accept,mcp-protocol-version",
             },
         )
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with urllib.request.urlopen(req, timeout=30, context=SSL_CONTEXT) as resp:
             allow = resp.headers.get("access-control-allow-origin")
             assert resp.status == 200 and allow == "*", (resp.status, allow)
             print(f"ok   CORS preflight: {resp.status}, allow-origin {allow}")

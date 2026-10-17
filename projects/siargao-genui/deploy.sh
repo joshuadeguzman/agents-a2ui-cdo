@@ -108,12 +108,14 @@ echo "Deploying the agent. The first deploy may ask to create an Artifact Regist
 (cd "$ROOT/agent" && SIARGAO_MODE="$SIARGAO_MODE" GEMINI_MODEL="${GEMINI_MODEL:-gemini-3.5-flash}" \
   GEMINI_LOCATION="${GEMINI_LOCATION:-global}" GOOGLE_API_KEY="${GOOGLE_API_KEY:-}" run ./deploy.sh)
 AGENT_URL="$(service_url siargao-agent)"
+if [[ -z "$DRY_RUN" ]]; then save_settings; fi
 run "$ROOT/agent/.venv/bin/python" "$ROOT/agent/scripts/smoke.py" "$AGENT_URL"
 
 echo
 echo "Deploying the MCP server."
 (cd "$ROOT/mcp" && run ./deploy.sh)
 MCP_URL="$(service_url siargao-mcp)/mcp"
+if [[ -z "$DRY_RUN" ]]; then save_settings; fi
 run "$ROOT/mcp/.venv/bin/python" "$ROOT/mcp/scripts/smoke.py" "${MCP_URL%/mcp}"
 
 if [[ "$DEPLOY_WEB" == yes ]]; then
