@@ -133,20 +133,22 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.sizeOf(context).width;
-    final bool wide = screenWidth >= sideBySideBreakpoint;
-    final ChatView requested =
-        _view ?? widget.initialView ?? (wide ? ChatView.both : ChatView.a2ui);
-    final ChatView view = (!wide && requested == ChatView.both)
-        ? ChatView.a2ui
-        : requested;
-    final ChatTurn? latest = _chat!.latest;
-    final Slot? headerSlot = latest == null
-        ? null
-        : (view == ChatView.text ? latest.text : latest.a2ui);
-
+    // Use the width this screen gets, not the window: the inspector panel
+    // can take part of it.
     return LayoutBuilder(
       builder: (context, constraints) {
+        final bool wide = constraints.maxWidth >= sideBySideBreakpoint;
+        final ChatView requested =
+            _view ??
+            widget.initialView ??
+            (wide ? ChatView.both : ChatView.a2ui);
+        final ChatView view = (!wide && requested == ChatView.both)
+            ? ChatView.a2ui
+            : requested;
+        final ChatTurn? latest = _chat!.latest;
+        final Slot? headerSlot = latest == null
+            ? null
+            : (view == ChatView.text ? latest.text : latest.a2ui);
         final EdgeInsets pad = pagePadding(constraints.maxWidth);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -344,7 +346,12 @@ class _TurnView extends StatelessWidget {
           _AnswerCaption(response: r),
           const SizedBox(height: Gaps.md),
           if (format == ResponseFormat.a2ui && r.hasSurface)
-            ResponseSurface(messages: r.messages, onAction: onAction)
+            ResponseSurface(
+              messages: r.messages,
+              entries: r.entries,
+              trace: r.trace,
+              onAction: onAction,
+            )
           else
             PlainTextView(markdown: r.text ?? 'No text answer.'),
         ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'a2ui/a2ui_surface_view.dart';
 import 'config.dart';
+import 'inspector/wire_log.dart';
 import 'services/demo_backend.dart';
 import 'services/models.dart';
 import 'widgets/status_panels.dart';
@@ -15,6 +16,7 @@ class AppScope extends InheritedWidget {
     super.key,
     required this.config,
     required this.backend,
+    required this.wire,
     required super.child,
   });
 
@@ -23,6 +25,9 @@ class AppScope extends InheritedWidget {
 
   /// Surface source for the current mode.
   final DemoBackend backend;
+
+  /// Requests and A2UI messages for the inspector panel.
+  final WireLog wire;
 
   /// The nearest scope.
   static AppScope of(BuildContext context) {
@@ -34,7 +39,9 @@ class AppScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(AppScope oldWidget) =>
-      config != oldWidget.config || backend != oldWidget.backend;
+      config != oldWidget.config ||
+      backend != oldWidget.backend ||
+      wire != oldWidget.wire;
 }
 
 /// Sends a surface button action and shows the outcome in a SnackBar.

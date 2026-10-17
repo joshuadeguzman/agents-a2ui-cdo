@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import '../inspector/wire_log.dart';
+
 /// How a surface reached the app (docs/CONTRACT.md `path`).
 enum DeliveryPath {
   /// A2A `message/stream` from the agent.
@@ -108,6 +110,8 @@ class SurfaceResponse {
     this.text,
     this.meta,
     this.note,
+    this.trace,
+    this.entries = const [],
   });
 
   /// Delivery path.
@@ -124,6 +128,12 @@ class SurfaceResponse {
 
   /// Extra honest context for the UI, for example how offline data was made.
   final String? note;
+
+  /// The inspector trace for this response, if the log is on.
+  final WireTrace? trace;
+
+  /// Inspector entries for [messages], same order and length, or empty.
+  final List<WireEntry> entries;
 
   /// True when there is something to render.
   bool get hasSurface => messages.isNotEmpty;

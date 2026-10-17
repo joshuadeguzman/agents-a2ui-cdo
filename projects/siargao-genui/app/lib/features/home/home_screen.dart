@@ -73,6 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     else
                       ResponseSurface(
                         messages: r.messages,
+                        entries: r.entries,
+                        trace: r.trace,
                         onAction: (a) => handleSurfaceAction(context, a),
                       ),
                   ],

@@ -14,3 +14,10 @@ U+2100-214F,U+2190-21FF,U+2212,U+2215,U+25A0-25FF,U+2600-26FF
 
 The font has no peso sign, so the app writes prices as "PHP 4,500".
 Nothing is fetched at runtime; the app works offline.
+
+Roboto Mono (RobotoMono-Regular.ttf, RobotoMono-Medium.ttf), used by the
+A2UI stream inspector for JSON. Copied from the Flutter 3.47.5 SDK
+(bin/cache/dart-sdk/bin/resources/devtools/assets/fonts/Roboto_Mono).
+Google publishes Roboto Mono under open licenses (Apache 2.0 for older
+releases, SIL OFL 1.1 for current ones); both allow bundling it in an app.
+Source: https://github.com/googlefonts/RobotoMono

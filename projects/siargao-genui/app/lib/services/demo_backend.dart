@@ -1,5 +1,6 @@
 import '../a2ui/a2ui_surface_view.dart';
 import '../config.dart';
+import '../inspector/wire_log.dart';
 import 'a2a_service.dart';
 import 'fixture_service.dart';
 import 'mcp_service.dart';
@@ -21,13 +22,16 @@ const String searchToolName = 'search_stays';
 /// Where the screens get surfaces from. One implementation per [DemoMode].
 abstract class DemoBackend {
   /// Picks the backend for [config].
-  factory DemoBackend.forConfig(AppConfig config, {FixtureService? fixtures}) =>
-      config.isLive
+  factory DemoBackend.forConfig(
+    AppConfig config, {
+    FixtureService? fixtures,
+    WireLog? wire,
+  }) => config.isLive
       ? LiveBackend(
-          a2a: A2aService(agentUrl: config.agentUrl),
-          mcp: McpService(mcpUrl: config.mcpUrl),
+          a2a: A2aService(agentUrl: config.agentUrl, wire: wire),
+          mcp: McpService(mcpUrl: config.mcpUrl, wire: wire),
         )
-      : OfflineBackend(fixtures ?? FixtureService());
+      : OfflineBackend(fixtures ?? FixtureService(), wire: wire);
 
   /// True for live services.
   bool get isLive;
@@ -76,10 +80,56 @@ String? routeOfflineIntent(String prompt) {
 /// Offline mode: everything comes from bundled fixtures.
 class OfflineBackend implements DemoBackend {
   /// Creates an [OfflineBackend].
-  OfflineBackend(this.fixtures);
+  OfflineBackend(this.fixtures, {this.wire});
 
   /// Fixture loader.
   final FixtureService fixtures;
+
+  /// Records fixture reads for the inspector, if set.
+  final WireLog? wire;
+
+  /// Logs a fixture read and its A2UI messages (or its text answer).
+  SurfaceResponse _traced(
+    WireChannel channel,
+    String label,
+    String fixture,
+    SurfaceResponse r, {
+    bool textOnly = false,
+    String via = 'recorded fixture',
+  }) {
+    final WireLog? log = wire;
+    if (log == null) return r;
+    final WireTrace trace = log.begin(channel, label, textOnly: textOnly);
+    log.add(
+      trace,
+      WireDirection.outgoing,
+      WireKind.request,
+      'read $fixture',
+      summary: 'Offline: no network, recorded ${channel.label} answer',
+    );
+    final List<WireEntry> entries = r.hasSurface
+        ? log.addA2ui(trace, r.messages, via: via)
+        : const [];
+    if (!r.hasSurface && r.text != null) {
+      log.add(
+        trace,
+        WireDirection.incoming,
+        WireKind.text,
+        'text answer',
+        summary: '${r.text!.length} characters of markdown',
+        json: {'text': r.text},
+      );
+    }
+    return SurfaceResponse(
+      path: r.path,
+      messages: r.messages,
+      text: r.text,
+      meta: r.meta,
+      note: r.note,
+      trace: trace,
+      entries: entries,
+    );
+  }
 
   @override
   bool get isLive => false;
@@ -96,7 +146,7 @@ class OfflineBackend implements DemoBackend {
     final String? note = intent == null
         ? 'Offline: matched your words to "${f.title}".'
         : null;
-    return switch (format) {
+    final SurfaceResponse r = switch (format) {
       ResponseFormat.a2ui => SurfaceResponse(
         path: f.path,
         messages: f.messages,
@@ -110,33 +160,58 @@ class OfflineBackend implements DemoBackend {
         note: note,
       ),
     };
+    return _traced(
+      WireChannel.fixture,
+      prompt,
+      'fixtures/$resolved.json',
+      r,
+      textOnly: format == ResponseFormat.text,
+    );
   }
 
   @override
   Future<SurfaceResponse> home() async {
     final Fixture f = await fixtures.load('home_first_run');
-    return SurfaceResponse(path: f.path, messages: f.messages, meta: f.meta);
+    return _traced(
+      WireChannel.fixture,
+      homeResourceUri,
+      'fixtures/home_first_run.json',
+      SurfaceResponse(path: f.path, messages: f.messages, meta: f.meta),
+    );
   }
 
   @override
   Future<SurfaceResponse> searchStays(StayQuery query) async {
     final Fixture f = await fixtures.load('stays_near_cloud9');
+    final String label =
+        '$searchToolName(${query.toArguments().entries.map((e) => '${e.key}: ${e.value}').join(', ')})';
     if (query == StayQuery.fixtureDefault) {
-      return SurfaceResponse(
-        path: f.path,
-        messages: f.messages,
-        meta: f.meta,
-        text: f.text,
+      return _traced(
+        WireChannel.fixture,
+        label,
+        'fixtures/stays_near_cloud9.json',
+        SurfaceResponse(
+          path: f.path,
+          messages: f.messages,
+          meta: f.meta,
+          text: f.text,
+        ),
       );
     }
     final List<Stay> results = filterStays(await fixtures.stays(), query);
-    return SurfaceResponse(
-      path: f.path,
-      messages: buildStaysMessages(f, results, query),
-      meta: f.meta,
-      note:
-          'Offline: filtered the sample stays on this device with the '
-          'search_stays rule.',
+    return _traced(
+      WireChannel.fixture,
+      label,
+      'fixtures/stays_near_cloud9.json',
+      SurfaceResponse(
+        path: f.path,
+        messages: buildStaysMessages(f, results, query),
+        meta: f.meta,
+        note:
+            'Offline: filtered the sample stays on this device with the '
+            'search_stays rule.',
+      ),
+      via: 'filled on this device',
     );
   }
 
@@ -191,6 +266,7 @@ class LiveBackend implements DemoBackend {
           text: reply.text,
           meta: reply.meta,
           note: 'The agent answered with text only.',
+          trace: reply.trace,
         );
       }
       throw const A2aException('The agent sent no surface.');
@@ -200,6 +276,8 @@ class LiveBackend implements DemoBackend {
       messages: format == ResponseFormat.a2ui ? reply.messages : const [],
       text: reply.text,
       meta: reply.meta,
+      trace: reply.trace,
+      entries: format == ResponseFormat.a2ui ? reply.entries : const [],
     );
   }
 
@@ -218,6 +296,8 @@ class LiveBackend implements DemoBackend {
       messages: reply.messages,
       text: reply.text ?? 'Sent "${action.name}" to the agent.',
       meta: reply.meta,
+      trace: reply.trace,
+      entries: reply.entries,
     );
   }
 }

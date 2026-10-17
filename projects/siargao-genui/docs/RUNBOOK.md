@@ -32,6 +32,8 @@ cd app && flutter run -d chrome
 
 Deep links on web: `?tab=chat&intent=first_time_trip&view=both`, `?tab=home`, `?tab=search`, `?tab=gallery`.
 
+To show the A2UI stream on stage, click `{ }` Show stream in the app bar, or open `?tab=chat&inspect=1&pace=step`. In Step mode each message waits for "Render next" (or PageDown / right arrow from a clicker), so the audience sees createSurface, then updateComponents, then updateDataModel build the screen. Replay on a card rebuilds that surface without a new request.
+
 ## Demo against local servers
 
 Three terminals:

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../a2ui/a2ui_surface_view.dart';
 import '../catalog/catalog_schemas.g.dart';
+import '../inspector/wire_log.dart';
 import 'json_rpc.dart';
 import 'models.dart';
 
@@ -30,10 +31,18 @@ class AgentReply {
     this.meta,
     this.taskId,
     this.contextId,
+    this.trace,
+    this.entries = const [],
   });
 
   /// A2UI messages from DataParts, in order, without duplicates.
   final List<Map<String, Object?>> messages;
+
+  /// Inspector trace, when a [WireLog] is attached.
+  final WireTrace? trace;
+
+  /// Inspector entries for [messages], same order.
+  final List<WireEntry> entries;
 
   /// Markdown text from the last message that had text.
   final String? text;
@@ -63,7 +72,11 @@ class A2aService {
     required this.agentUrl,
     http.Client? client,
     this.timeout = const Duration(seconds: 90),
+    this.wire,
   }) : _client = client ?? http.Client();
+
+  /// Records requests and frames for the inspector, if set.
+  final WireLog? wire;
 
   /// A2A base URL (the JSON-RPC endpoint).
   final String agentUrl;
@@ -102,16 +115,23 @@ class A2aService {
     String? intent,
     ResponseFormat format = ResponseFormat.a2ui,
   }) async {
-    final AgentReply reply = await _stream({
-      'kind': 'message',
-      'role': 'user',
-      'messageId': newId(),
-      'parts': [
-        {'kind': 'text', 'text': prompt},
-      ],
-      'metadata': requestMetadata(format: format, intent: intent),
-      'extensions': [a2uiExtensionUri.toString()],
-    });
+    final AgentReply reply = await _stream(
+      wire?.begin(
+        WireChannel.a2a,
+        prompt,
+        textOnly: format == ResponseFormat.text,
+      ),
+      {
+        'kind': 'message',
+        'role': 'user',
+        'messageId': newId(),
+        'parts': [
+          {'kind': 'text', 'text': prompt},
+        ],
+        'metadata': requestMetadata(format: format, intent: intent),
+        'extensions': [a2uiExtensionUri.toString()],
+      },
+    );
     if (format == ResponseFormat.a2ui) {
       lastContextId = reply.contextId ?? lastContextId;
       lastTaskId = reply.taskId ?? lastTaskId;
@@ -122,7 +142,7 @@ class A2aService {
   /// Sends a user action as a DataPart
   /// `{"version": "v0.9", "action": {...}}` in the last A2UI context.
   Future<AgentReply> sendAction(SurfaceAction action) {
-    return _stream({
+    return _stream(wire?.begin(WireChannel.a2a, 'Action: ${action.name}'), {
       'kind': 'message',
       'role': 'user',
       'messageId': newId(),
@@ -138,7 +158,10 @@ class A2aService {
     });
   }
 
-  Future<AgentReply> _stream(Map<String, Object?> message) async {
+  Future<AgentReply> _stream(
+    WireTrace? trace,
+    Map<String, Object?> message,
+  ) async {
     final String id = newId();
     final Map<String, Object?> body = {
       'jsonrpc': '2.0',
@@ -146,6 +169,16 @@ class A2aService {
       'method': 'message/stream',
       'params': {'message': message},
     };
+    if (trace != null) {
+      wire?.add(
+        trace,
+        WireDirection.outgoing,
+        WireKind.request,
+        'POST message/stream',
+        summary: _describeRequest(message),
+        json: body,
+      );
+    }
     final http.Request request = http.Request('POST', Uri.parse(agentUrl))
       ..headers.addAll({
         'Content-Type': 'application/json',
@@ -154,51 +187,151 @@ class A2aService {
       })
       ..body = jsonEncode(body);
 
+    final _Collector c = _Collector();
+    final List<WireEntry> entries = [];
+    void onFrame(Map<String, Object?> frame) {
+      final int before = c.messages.length;
+      final String? textBefore = c.text;
+      try {
+        _foldFrame(c, frame);
+      } finally {
+        if (trace != null) {
+          _logFrame(trace, frame, c, before, textBefore, entries);
+        }
+      }
+    }
+
     final http.StreamedResponse response;
-    final String text;
     try {
       response = await _client.send(request).timeout(timeout);
-      text = await response.stream.bytesToString().timeout(timeout);
+      if (response.statusCode >= 400) {
+        throw A2aException(
+          'The agent answered with HTTP ${response.statusCode}.',
+        );
+      }
+      final String type = (response.headers['content-type'] ?? '')
+          .toLowerCase();
+      final Stream<String> lines = response.stream
+          .timeout(timeout)
+          .transform(utf8.decoder)
+          .transform(const LineSplitter());
+      if (type.contains('text/event-stream')) {
+        // Fold each SSE event as it arrives, so the inspector shows real
+        // arrival times.
+        final List<String> data = [];
+        void flush() {
+          if (data.isEmpty) return;
+          final String payload = data.join('\n').trim();
+          data.clear();
+          if (payload.isEmpty) return;
+          final Object? decoded = jsonDecode(payload);
+          if (decoded is Map) onFrame(decoded.cast<String, Object?>());
+        }
+
+        await for (final String raw in lines) {
+          final String line = raw.trimRight();
+          if (line.isEmpty) {
+            flush();
+          } else if (line.startsWith('data:')) {
+            data.add(line.substring(5).trimLeft());
+          }
+        }
+        flush();
+      } else {
+        final String text = (await lines.toList()).join('\n');
+        decodeRpcBody(text, type).forEach(onFrame);
+      }
     } on TimeoutException {
       throw const A2aException('The agent took too long to answer.');
     } on http.ClientException catch (e) {
       throw A2aException(
         'Could not reach the agent at $agentUrl (${e.message}).',
       );
-    }
-    if (response.statusCode >= 400) {
-      throw A2aException(
-        'The agent answered with HTTP ${response.statusCode}.',
-      );
-    }
-    final List<Map<String, Object?>> frames;
-    try {
-      frames = decodeRpcBody(text, response.headers['content-type']);
     } on FormatException {
       throw const A2aException(
         'The agent sent a response the app could not read.',
       );
     }
-    return parseFrames(frames);
+    final AgentReply reply = c.build();
+    return AgentReply(
+      messages: reply.messages,
+      text: reply.text,
+      meta: reply.meta,
+      taskId: reply.taskId,
+      contextId: reply.contextId,
+      trace: trace,
+      entries: entries,
+    );
+  }
+
+  void _logFrame(
+    WireTrace trace,
+    Map<String, Object?> frame,
+    _Collector c,
+    int before,
+    String? textBefore,
+    List<WireEntry> entries,
+  ) {
+    final WireLog log = wire!;
+    final Object? result = frame['result'];
+    final String kind = result is Map
+        ? '${result['kind'] ?? 'result'}'
+        : 'error';
+    final List<Map<String, Object?>> added = c.messages.sublist(before);
+    if (added.isNotEmpty) {
+      entries.addAll(log.addA2ui(trace, added, via: 'SSE $kind DataPart'));
+      return;
+    }
+    final Object? status = result is Map ? result['status'] : null;
+    final String? state = status is Map ? status['state']?.toString() : null;
+    final bool newText = c.text != null && c.text != textBefore;
+    log.add(
+      trace,
+      WireDirection.incoming,
+      newText ? WireKind.text : WireKind.frame,
+      'SSE $kind',
+      summary: [
+        ?state,
+        if (newText) 'text part',
+        if (c.meta != null && state == 'completed') c.meta!.label,
+      ].join(' · '),
+      json: frame,
+    );
+  }
+
+  static String _describeRequest(Map<String, Object?> message) {
+    final List<Object?> parts = (message['parts'] as List<Object?>?) ?? [];
+    final Object? first = parts.isEmpty ? null : parts.first;
+    final Object? meta = message['metadata'];
+    final Object? siargao = meta is Map ? meta['siargao'] : null;
+    final String format = siargao is Map
+        ? 'responseFormat ${siargao['responseFormat']}'
+        : 'action';
+    if (first is Map && first['kind'] == 'data') return 'DataPart · $format';
+    return 'TextPart · $format';
   }
 
   /// Folds JSON-RPC frames (each `{"result": ...}` or `{"error": ...}`) into
   /// one [AgentReply]. Public for tests.
   static AgentReply parseFrames(List<Map<String, Object?>> frames) {
     final _Collector c = _Collector();
-    for (final Map<String, Object?> frame in frames) {
-      final Object? error = frame['error'];
-      if (error is Map) {
-        throw A2aException(
-          'The agent reported an error: ${error['message'] ?? 'unknown'}.',
-        );
-      }
-      final Object? result = frame.containsKey('result')
-          ? frame['result']
-          : frame;
-      if (result is Map) c.addResult(result.cast<String, Object?>());
+    for (final Map<String, Object?> f in frames) {
+      _foldFrame(c, f);
     }
     return c.build();
+  }
+
+  static void _foldFrame(_Collector c, Map<String, Object?> frame) {
+    final Object? error = frame['error'];
+    if (error is Map) {
+      throw A2aException(
+        'The agent reported an error: ${error['message'] ?? 'unknown'}.',
+      );
+    }
+    final Object? result = frame.containsKey('result')
+        ? frame['result']
+        : frame;
+    if (result is Map) c.addResult(result.cast<String, Object?>());
   }
 }
 

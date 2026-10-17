@@ -45,7 +45,14 @@ SHOTS=(
   "home|tab=home|1440 390"
   "search|tab=search|1440 390"
   "gallery|tab=gallery|1440 390"
+  "inspector-chat|tab=chat&intent=first_time_trip&view=a2ui&inspect=1|1440 390"
+  "inspector-step|tab=chat&intent=first_time_trip&inspect=1&pace=step|1440"
+  "inspector-home|tab=home&inspect=1|1440"
 )
+# SHOTS_OVERRIDE="name|query|widths;name|query|widths" replaces the list.
+if [[ -n "${SHOTS_OVERRIDE:-}" ]]; then
+  IFS=';' read -ra SHOTS <<<"$SHOTS_OVERRIDE"
+fi
 
 capture() {
   # capture URL OUT WINDOW_W WINDOW_H SCALE

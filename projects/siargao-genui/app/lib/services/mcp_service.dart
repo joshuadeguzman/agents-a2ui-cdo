@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../inspector/wire_log.dart';
 import 'json_rpc.dart';
 import 'models.dart';
 
@@ -32,7 +33,11 @@ class McpService {
     required this.mcpUrl,
     http.Client? client,
     this.timeout = const Duration(seconds: 60),
+    this.wire,
   }) : _client = client ?? http.Client();
+
+  /// Records requests and results for the inspector, if set.
+  final WireLog? wire;
 
   /// MCP endpoint, for example `http://localhost:10003/mcp`.
   final String mcpUrl;
@@ -46,19 +51,25 @@ class McpService {
 
   /// `resources/read` for an A2UI resource such as `a2ui://home/first-run`.
   Future<SurfaceResponse> readResource(String uri) async {
+    final WireTrace? trace = wire?.begin(WireChannel.mcpResource, uri);
     final Map<String, Object?> result = await _call('resources/read', {
       'uri': uri,
-    });
+    }, trace: trace);
     final List<Object?> contents =
         (result['contents'] as List<Object?>?) ?? const [];
     for (final Object? c in contents) {
       if (c is Map && c['mimeType'] == a2uiMimeType && c['text'] is String) {
+        final List<Map<String, Object?>> messages = _decode(
+          c['text'] as String,
+        );
         return SurfaceResponse(
           path: DeliveryPath.mcpResource,
-          messages: _decode(c['text'] as String),
+          messages: messages,
           meta:
               ResponseMeta.maybeFrom(result['_meta']) ??
               ResponseMeta.maybeFrom(c['_meta']),
+          trace: trace,
+          entries: _logA2ui(trace, messages, 'resource contents[0].text'),
         );
       }
     }
@@ -71,10 +82,14 @@ class McpService {
     String name,
     Map<String, Object?> arguments,
   ) async {
+    final WireTrace? trace = wire?.begin(
+      WireChannel.mcpTool,
+      '$name(${arguments.entries.map((e) => '${e.key}: ${e.value}').join(', ')})',
+    );
     final Map<String, Object?> result = await _call('tools/call', {
       'name': name,
       'arguments': arguments,
-    });
+    }, trace: trace);
     final List<Object?> content =
         (result['content'] as List<Object?>?) ?? const [];
     final List<String> texts = [];
@@ -105,7 +120,18 @@ class McpService {
       messages: messages,
       text: texts.isEmpty ? null : texts.join('\n\n'),
       meta: meta,
+      trace: trace,
+      entries: _logA2ui(trace, messages, 'embedded resource text'),
     );
+  }
+
+  List<WireEntry> _logA2ui(
+    WireTrace? trace,
+    List<Map<String, Object?>> messages,
+    String via,
+  ) {
+    if (trace == null) return const [];
+    return wire!.addA2ui(trace, messages, via: via);
   }
 
   List<Map<String, Object?>> _decode(String text) {
@@ -120,19 +146,31 @@ class McpService {
     String method,
     Map<String, Object?> params, {
     bool retried = false,
+    WireTrace? trace,
   }) async {
     final String id = newId();
-    final http.Response response = await _post({
+    final Map<String, Object?> body = {
       'jsonrpc': '2.0',
       'id': id,
       'method': method,
       'params': params,
-    });
+    };
+    if (trace != null) {
+      wire!.add(
+        trace,
+        WireDirection.outgoing,
+        WireKind.request,
+        'POST $method',
+        summary: 'JSON-RPC over Streamable HTTP',
+        json: body,
+      );
+    }
+    final http.Response response = await _post(body);
     if ((response.statusCode == 400 || response.statusCode == 404) &&
         !retried &&
         response.body.toLowerCase().contains('session')) {
       await _initialize();
-      return _call(method, params, retried: true);
+      return _call(method, params, retried: true, trace: trace);
     }
     if (response.statusCode >= 400) {
       throw McpException(
@@ -159,6 +197,16 @@ class McpService {
     final Object? result = frame['result'];
     if (result is! Map) {
       throw const McpException('The MCP server sent no result.');
+    }
+    if (trace != null) {
+      wire!.add(
+        trace,
+        WireDirection.incoming,
+        WireKind.frame,
+        'result',
+        summary: 'HTTP ${response.statusCode} · mimeType $a2uiMimeType',
+        json: {...frame, 'result': elideA2uiText(result)},
+      );
     }
     return result.cast<String, Object?>();
   }
@@ -206,4 +254,18 @@ class McpService {
       );
     }
   }
+}
+
+/// A copy of an MCP result with each A2UI `text` payload replaced by a short
+/// note. The inspector lists those messages one by one right after it.
+Object? elideA2uiText(Object? node) {
+  if (node is List) return [for (final Object? e in node) elideA2uiText(e)];
+  if (node is! Map) return node;
+  final bool a2ui = node['mimeType'] == a2uiMimeType && node['text'] is String;
+  return {
+    for (final MapEntry<Object?, Object?> e in node.entries)
+      '${e.key}': a2ui && e.key == 'text'
+          ? '<JSON array of A2UI messages, listed below>'
+          : elideA2uiText(e.value),
+  };
 }

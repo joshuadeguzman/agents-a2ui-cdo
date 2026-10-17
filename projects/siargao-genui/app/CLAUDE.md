@@ -15,6 +15,8 @@ flutter run -d chrome --dart-define=DEMO_MODE=live \
 
 Deep links (web): `?tab=chat|home|search|gallery`, `&intent=<id>` runs a chat prompt, `&view=text|a2ui|both`. On iOS and Android pass the same query as `--dart-define=DEEP_LINK=tab=home`.
 
+A2UI stream inspector: the `{ }` button in the app bar (or `inspect=1`) shows every request and A2UI message as it arrives, beside the surface it builds. Pace `instant|slow|step` (`pace=` in the link) holds each message before it renders; in Step, PageDown or the right arrow renders the next one, so a presentation clicker works. Code in `lib/inspector/`.
+
 ## Test
 
 ```sh

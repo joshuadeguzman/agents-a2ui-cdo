@@ -42,3 +42,9 @@ flutter:
           weight: 600
         - asset: assets/fonts/GoogleSansFlex-Bold.ttf
           weight: 700
+    - family: RobotoMono
+      fonts:
+        - asset: assets/fonts/RobotoMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/RobotoMono-Medium.ttf
+          weight: 500

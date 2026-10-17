@@ -107,6 +107,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       ],
                       ResponseSurface(
                         messages: r.messages,
+                        entries: r.entries,
+                        trace: r.trace,
                         onAction: (a) => handleSurfaceAction(context, a),
                       ),
                     ],
