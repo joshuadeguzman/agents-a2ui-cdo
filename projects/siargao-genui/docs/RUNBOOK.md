@@ -91,4 +91,13 @@ Drop photos into `app/assets/img/<key>.jpg` (or `.png`, `.webp`). Keys are liste
 
 ## Deploy to Cloud Run
 
-See the step-by-step commands in `docs/REPORT.md` ("Deploy tomorrow"). Each `deploy.sh` refuses to run unless `CONFIRM_DEPLOY=yes` is set.
+The easy way, from `projects/siargao-genui/`:
+
+```sh
+./deploy.sh            # asks for project, region, mode, Gemini access (Vertex or API key), web app y/n
+DRY_RUN=1 ./deploy.sh  # same questions, prints what it would run, changes nothing
+```
+
+It shows a summary and only deploys after you type `deploy`. It runs the agent and MCP tests, can grant `roles/aiplatform.user` for Vertex, deploys siargao-agent and siargao-mcp, smoke tests both, and can build and deploy siargao-web. A Gemini API key is read hidden and set as an env var on the agent service, never written to disk.
+
+For the manual route, see the step-by-step commands in `docs/REPORT.md` ("Deploy tomorrow"). Each `deploy.sh` refuses to run unless `CONFIRM_DEPLOY=yes` is set.

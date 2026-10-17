@@ -9,6 +9,9 @@
 #
 # Overridable: PROJECT, REGION, SERVICE, GEMINI_MODEL, GEMINI_LOCATION,
 # SIARGAO_MODE, SIARGAO_MODEL_RETRY.
+#
+# Gemini auth: Vertex AI with the Cloud Run service account by default. Set
+# GOOGLE_API_KEY to use a Gemini API key (AI Studio) instead.
 set -euo pipefail
 
 if [[ "${CONFIRM_DEPLOY:-}" != "yes" ]]; then
@@ -28,7 +31,16 @@ SIARGAO_MODEL_RETRY="${SIARGAO_MODEL_RETRY:-false}"
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-echo "Deploying ${SERVICE} to ${PROJECT}/${REGION} (mode=${SIARGAO_MODE}, model=${GEMINI_MODEL}@${GEMINI_LOCATION})"
+ENV_VARS="SIARGAO_MODE=${SIARGAO_MODE},GEMINI_MODEL=${GEMINI_MODEL},SIARGAO_MODEL_RETRY=${SIARGAO_MODEL_RETRY}"
+if [[ -n "${GOOGLE_API_KEY:-}" ]]; then
+  AUTH="Gemini API key"
+  ENV_VARS="${ENV_VARS},GOOGLE_GENAI_USE_VERTEXAI=FALSE,GOOGLE_API_KEY=${GOOGLE_API_KEY}"
+else
+  AUTH="Vertex AI @ ${GEMINI_LOCATION}"
+  ENV_VARS="${ENV_VARS},GOOGLE_GENAI_USE_VERTEXAI=TRUE,GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${GEMINI_LOCATION}"
+fi
+
+echo "Deploying ${SERVICE} to ${PROJECT}/${REGION} (mode=${SIARGAO_MODE}, model=${GEMINI_MODEL}, auth=${AUTH})"
 gcloud run deploy "${SERVICE}" \
   --project "${PROJECT}" \
   --region "${REGION}" \
@@ -40,7 +52,7 @@ gcloud run deploy "${SERVICE}" \
   --min-instances 0 \
   --max-instances 3 \
   --timeout 120 \
-  --set-env-vars "SIARGAO_MODE=${SIARGAO_MODE},GOOGLE_GENAI_USE_VERTEXAI=TRUE,GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${GEMINI_LOCATION},GEMINI_MODEL=${GEMINI_MODEL},SIARGAO_MODEL_RETRY=${SIARGAO_MODEL_RETRY}"
+  --set-env-vars "${ENV_VARS}"
 
 URL="$(gcloud run services describe "${SERVICE}" --project "${PROJECT}" --region "${REGION}" --format 'value(status.url)')"
 echo "Deployed: ${URL}"

@@ -105,6 +105,8 @@ I reviewed every screenshot. There is no overflow, no clipped text and no red er
 
 ## Deploy tomorrow (you run these)
 
+Shortcut: `./deploy.sh` in `projects/siargao-genui/` asks the questions below and runs all of it after you type `deploy`. `DRY_RUN=1 ./deploy.sh` previews it. The manual steps:
+
 Each `deploy.sh` refuses to run unless `CONFIRM_DEPLOY=yes` is set. The APIs these need are already enabled in `devfest-genui-manila`: Cloud Run, Cloud Build, Artifact Registry and Vertex AI. I checked this read-only.
 
 ```sh
